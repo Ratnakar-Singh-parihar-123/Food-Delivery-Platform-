@@ -1,0 +1,58 @@
+export const restaurants = [
+  {
+    id: 1,
+    name: "Sharma Family Dhaba",
+    type: "Dhaba",
+    cuisine: "North Indian • Punjabi",
+    rating: 4.6,
+    deliveryTime: "25-30 min",
+    distance: "1.2 km",
+    offer: "20% off",
+    isOpen: true,
+    image:
+      "https://images.unsplash.com/photo-1589302168068-964664d93dc0?w=400&h=300&fit=crop",
+    logo: "https://ui-avatars.com/api/?name=SF&background=e85d3a&color=fff&size=40",
+  },
+  {
+    id: 2,
+    name: "Cake World",
+    type: "Bakery",
+    cuisine: "Bakery • Desserts",
+    rating: 4.8,
+    deliveryTime: "20-25 min",
+    distance: "0.8 km",
+    offer: "Free delivery",
+    isOpen: true,
+    image:
+      "https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=400&h=300&fit=crop",
+    logo: "https://ui-avatars.com/api/?name=CW&background=e85d3a&color=fff&size=40",
+  },
+  {
+    id: 3,
+    name: "Royal Restaurant",
+    type: "Restaurant",
+    cuisine: "Indian • Chinese",
+    rating: 4.5,
+    deliveryTime: "30 min",
+    distance: "2.0 km",
+    offer: "₹100 off",
+    isOpen: true,
+    image:
+      "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=400&h=300&fit=crop",
+    logo: "https://ui-avatars.com/api/?name=RR&background=e85d3a&color=fff&size=40",
+  },
+  {
+    id: 4,
+    name: "The Food Junction",
+    type: "Fast Food",
+    cuisine: "Burgers • Sandwiches",
+    rating: 4.7,
+    deliveryTime: "20 min",
+    distance: "1.5 km",
+    offer: "Combo deal",
+    isOpen: false,
+    image:
+      "https://images.unsplash.com/photo-1552566626-52f8b828add9?w=400&h=300&fit=crop",
+    logo: "https://ui-avatars.com/api/?name=FJ&background=e85d3a&color=fff&size=40",
+  },
+];
