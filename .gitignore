@@ -31,3 +31,5 @@ pnpm-debug.log*
 
 # Vercel
 .vercel/
+**/google-services.json
+.kilo/
