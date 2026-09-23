@@ -1,26 +1,26 @@
-import admin from "firebase-admin";
-import fs from "fs";
-import path from "path";
-import { fileURLToPath } from "url";
+// import admin from "firebase-admin";
+// import fs from "fs";
+// import path from "path";
+// import { fileURLToPath } from "url";
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+// const __filename = fileURLToPath(import.meta.url);
+// const __dirname = path.dirname(__filename);
 
-const serviceAccount = JSON.parse(
-  fs.readFileSync(
-    path.join(
-      __dirname,
-      "../food-app-778b7-firebase-adminsdk-fbsvc-0ff27c3f9c.json",
-    ),
-    "utf8",
-  ),
-);
+// const serviceAccount = JSON.parse(
+//   fs.readFileSync(
+//     path.join(
+//       __dirname,
+//       "../food-app-778b7-firebase-adminsdk-fbsvc-0ff27c3f9c.json",
+//     ),
+//     "utf8",
+//   ),
+// );
 
-admin.initializeApp({
-  credential: admin.credential.cert(serviceAccount),
-});
+// admin.initializeApp({
+//   credential: admin.credential.cert(serviceAccount),
+// });
 
-export default admin;
+// export default admin;
 
 // import admin from "firebase-admin";
 // import fs from "fs";
@@ -58,3 +58,28 @@ export default admin;
 // console.log("✅ Firebase Admin initialized successfully");
 
 // export default admin;
+import admin from "firebase-admin";
+
+const serviceAccount = {
+  projectId: process.env.FIREBASE_PROJECT_ID,
+  clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
+  privateKey: process.env.FIREBASE_PRIVATE_KEY?.replace(/\\n/g, "\n"),
+};
+
+if (!serviceAccount.projectId) {
+  throw new Error("FIREBASE_PROJECT_ID is missing");
+}
+
+if (!serviceAccount.clientEmail) {
+  throw new Error("FIREBASE_CLIENT_EMAIL is missing");
+}
+
+if (!serviceAccount.privateKey) {
+  throw new Error("FIREBASE_PRIVATE_KEY is missing");
+}
+
+admin.initializeApp({
+  credential: admin.credential.cert(serviceAccount),
+});
+
+export default admin;
