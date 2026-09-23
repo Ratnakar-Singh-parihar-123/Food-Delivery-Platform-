@@ -207,7 +207,7 @@
 //   const getImageUrl = (path) => {
 //     if (!path) return null;
 //     if (path.startsWith("http")) return path;
-//     const base = import.meta.env.VITE_API_BASE || "http://localhost:9000";
+//     const base = import.meta.env.VITE_STATIC_BASE || "http://localhost:9000";
 //     return `${base}${path}`;
 //   };
 
@@ -688,7 +688,7 @@ function CategoryDetailModal({ category, onClose }) {
   const getImageUrl = (path) => {
     if (!path) return null;
     if (path.startsWith("http")) return path;
-    const base = import.meta.env.VITE_API_BASE || "http://localhost:9000";
+    const base = import.meta.env.VITE_STATIC_BASE || "http://localhost:9000";
     return `${base}${path}`;
   };
 
@@ -939,7 +939,7 @@ export default function AdminCategories() {
   const getImageUrl = (path) => {
     if (!path) return null;
     if (path.startsWith("http")) return path;
-    const base = import.meta.env.VITE_API_BASE || "http://localhost:9000";
+    const base = import.meta.env.VITE_STATIC_BASE || "http://localhost:9000";
     return `${base}${path}`;
   };
 
