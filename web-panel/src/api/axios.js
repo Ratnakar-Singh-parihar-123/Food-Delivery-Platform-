@@ -33,10 +33,6 @@ const api = axios.create({
   timeout: 15000,
 });
 
-// ============================================================
-// ADMIN AUTH TOKEN
-// ============================================================
-
 api.interceptors.request.use(
   (config) => {
     const adminToken = localStorage.getItem("adminToken");
@@ -50,22 +46,9 @@ api.interceptors.request.use(
   (error) => Promise.reject(error),
 );
 
-// ============================================================
-// RESPONSE
-// ============================================================
-
 api.interceptors.response.use(
   (response) => response,
   (error) => {
-    if (error.response?.status === 401) {
-      localStorage.removeItem("adminToken");
-      localStorage.removeItem("admin");
-
-      if (window.location.pathname.startsWith("/admin")) {
-        window.location.href = "/admin/login";
-      }
-    }
-
     return Promise.reject(error);
   },
 );
