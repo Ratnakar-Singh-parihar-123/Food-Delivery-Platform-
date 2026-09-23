@@ -8,7 +8,7 @@ export function AdminProvider({ children }) {
   const [adminLoading, setAdminLoading] = useState(true);
   const [authError, setAuthError] = useState("");
 
-  // ✅ सिर्फ localStorage से admin restore करें – कोई API call नहीं
+  // localStorage
   useEffect(() => {
     const storedAdmin = localStorage.getItem("admin");
     const token = localStorage.getItem("adminToken");
@@ -21,11 +21,11 @@ export function AdminProvider({ children }) {
         localStorage.removeItem("adminToken");
       }
     }
-    // Loading खत्म
+    // Loading
     setAdminLoading(false);
   }, []);
 
-  // ✅ Login function – token भी store करें
+  // ✅ Login function –
   const login = async (credentials) => {
     try {
       setAdminLoading(true);
@@ -35,7 +35,7 @@ export function AdminProvider({ children }) {
       console.log("LOGIN RESPONSE:", response);
 
       const adminData = response?.data?.admin;
-      const token = response?.data?.token; // मान लिया कि API token return करता है
+      const token = response?.data?.token;
 
       if (!adminData) {
         throw new Error("Invalid response from server");
@@ -44,7 +44,7 @@ export function AdminProvider({ children }) {
       setAdmin(adminData);
       localStorage.setItem("admin", JSON.stringify(adminData));
 
-      // ✅ Token store करें (अगर मिला)
+      // ✅ Token store
       if (token) {
         localStorage.setItem("adminToken", token);
       }
@@ -67,7 +67,7 @@ export function AdminProvider({ children }) {
     }
   };
 
-  // ✅ Logout – सिर्फ यहाँ clear हो
+  // ✅ Logout –
   const logout = () => {
     console.log("Logout clicked");
     setAdmin(null);
@@ -76,9 +76,6 @@ export function AdminProvider({ children }) {
     // optional: API logout call
   };
 
-  // 🔹 यदि आप चाहें तो fetchAdmin को रख सकते हैं, लेकिन हम इसे use नहीं कर रहे
-  // (इसे हटा दिया या कमेंट कर दिया)
-
   const value = {
     admin,
     setAdmin,
@@ -86,7 +83,7 @@ export function AdminProvider({ children }) {
     authError,
     login,
     logout,
-    // fetchAdmin, // यदि चाहें तो add करें
+    // fetchAdmin,
   };
 
   return (
