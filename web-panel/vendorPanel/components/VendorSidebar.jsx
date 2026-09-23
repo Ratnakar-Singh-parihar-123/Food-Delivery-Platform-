@@ -34,7 +34,7 @@ const buildImageUrl = (imagePath) => {
   if (imagePath.startsWith("http://") || imagePath.startsWith("https://")) {
     return imagePath;
   }
-  const baseUrl = import.meta.env.VITE_API_BASE || "http://localhost:9000";
+  const baseUrl = import.meta.env.VITE_STATIC_BASE || "http://localhost:9000";
   const path = imagePath.startsWith("/") ? imagePath : `/${imagePath}`;
   return `${baseUrl}${path}`;
 };
