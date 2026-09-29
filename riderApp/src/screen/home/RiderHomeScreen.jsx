@@ -38,11 +38,11 @@ import {
 
 const { width } = Dimensions.get('window');
 const CARD_WIDTH = width - 40;
-const SOCKET_URL = 'http://10.200.227.211:9000';
+const SOCKET_URL = 'https://food-delivery-platform-ypx6.onrender.com';
 const MAX_ORDERS = 10;
 
 // ─── Base URL for images ──────────────────────────────────
-const BASE_URL = 'http://10.200.227.211:9000';
+const BASE_URL = 'https://food-delivery-platform-ypx6.onrender.com';
 
 const getImageUrl = url => {
   if (!url) return null;

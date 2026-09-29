@@ -46,7 +46,7 @@
 //   if (imagePath.startsWith('http://') || imagePath.startsWith('https://')) {
 //     return imagePath;
 //   }
-//   const baseUrl = 'https://myfoodmitra-ecosystem.onrender.com'; // move to config
+//   const baseUrl = 'https://food-delivery-platform-ypx6.onrender.com'; // move to config
 //   const path = imagePath.startsWith('/') ? imagePath : `/${imagePath}`;
 //   return `${baseUrl}${path}`;
 // };
@@ -495,7 +495,7 @@ const buildImageUrl = imagePath => {
   if (imagePath.startsWith('http://') || imagePath.startsWith('https://')) {
     return imagePath;
   }
-  const baseUrl = 'https://myfoodmitra-ecosystem.onrender.com';
+  const baseUrl = 'https://food-delivery-platform-ypx6.onrender.com';
   const path = imagePath.startsWith('/') ? imagePath : `/${imagePath}`;
   return `${baseUrl}${path}`;
 };

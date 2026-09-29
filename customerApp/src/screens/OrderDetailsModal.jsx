@@ -29,7 +29,7 @@ const COLORS = {
   danger: '#dc2626',
 };
 
-const STATIC_BASE = 'https://myfoodmitra-ecosystem.onrender.com';
+const STATIC_BASE = 'https://food-delivery-platform-ypx6.onrender.com';
 
 // ─── Build image URL ─────────────────────────────────────
 const buildImageUrl = imagePath => {

@@ -39,7 +39,7 @@ const COLORS = {
 };
 
 // ─── Helper: Build absolute image URL ─────────────────────
-const API_BASE = 'http://10.200.227.211:9000'; // Without /api/2026
+const API_BASE = 'https://food-delivery-platform-ypx6.onrender.com'; // Without /api/2026
 
 const getImageUrl = path => {
   if (!path) return null;
@@ -131,7 +131,8 @@ export default function RiderEditProfileScreen({ navigation }) {
       formData.append('type', 'profile_photo');
 
       const token = await AsyncStorage.getItem('riderToken');
-      const baseUrl = 'http://10.200.227.211:9000/api/2026';
+      const baseUrl =
+        'https://food-delivery-platform-ypx6.onrender.com/api/2026';
 
       const response = await fetch(`${baseUrl}/rider/documents/upload`, {
         method: 'POST',

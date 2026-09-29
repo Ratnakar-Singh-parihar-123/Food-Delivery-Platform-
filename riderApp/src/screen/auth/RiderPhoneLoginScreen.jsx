@@ -125,9 +125,14 @@ export default function RiderPhoneLoginScreen({ navigation }) {
       if (!riderId) {
         throw new Error('Invalid server response – riderId missing.');
       }
+      // navigation.navigate('RiderOtpVerification', {
+      //   phoneNumber: trimmedPhone,
+      //   riderId,
+      // });
       navigation.navigate('RiderOtpVerification', {
         phoneNumber: trimmedPhone,
         riderId,
+        otp: response.data.otp,
       });
     } catch (err) {
       const status = err.response?.status;

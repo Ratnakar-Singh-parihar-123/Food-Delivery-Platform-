@@ -38,7 +38,7 @@ const buildImageUrl = imagePath => {
   if (imagePath.startsWith('http://') || imagePath.startsWith('https://')) {
     return imagePath;
   }
-  const baseUrl = 'https://myfoodmitra-ecosystem.onrender.com'; // ⚠️ CHANGE THIS
+  const baseUrl = 'https://food-delivery-platform-ypx6.onrender.com'; // ⚠️ CHANGE THIS
   return `${baseUrl}${imagePath.startsWith('/') ? '' : '/'}${imagePath}`;
 };
 

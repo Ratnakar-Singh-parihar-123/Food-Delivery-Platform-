@@ -31,7 +31,7 @@ import {
 } from '../../api/customerApi';
 
 // ── Server base for static files (images) ──
-const STATIC_BASE = 'https://myfoodmitra-ecosystem.onrender.com'; // no trailing slash
+const STATIC_BASE = 'https://food-delivery-platform-ypx6.onrender.com'; // no trailing slash
 
 const CustomerProfile = ({ navigation }) => {
   // ── State ──

@@ -2,7 +2,7 @@
 import io from 'socket.io-client';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const SOCKET_URL = 'https://myfoodmitra-ecosystem.onrender.com';
+const SOCKET_URL = 'https://food-delivery-platform-ypx6.onrender.com';
 
 export const socket = io(SOCKET_URL, {
   transports: ['websocket'],

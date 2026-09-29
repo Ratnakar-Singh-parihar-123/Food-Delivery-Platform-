@@ -108,7 +108,7 @@ const STATUS_CONFIG = {
 };
 
 // ─── Helper: Image URL with base URL ─────────────────────
-const BASE_URL = 'http://10.200.227.211:9000'; // अपने server URL से replace करें
+const BASE_URL = 'https://food-delivery-platform-ypx6.onrender.com';
 const getImageUrl = url => {
   if (!url) return null;
   if (url.startsWith('http')) return url;

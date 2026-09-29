@@ -17,7 +17,7 @@ import { useFocusEffect } from '@react-navigation/native';
 import ScreenHeader from '../components/ScreenHeader';
 import { useAppUI } from '../context/AppUIContext';
 
-const BASE_URL = 'https://myfoodmitra-ecosystem.onrender.com';
+const BASE_URL = 'https://food-delivery-platform-ypx6.onrender.com';
 const COLORS = {
   primary: '#FF5A1F',
   primaryLight: '#FF8A5C',

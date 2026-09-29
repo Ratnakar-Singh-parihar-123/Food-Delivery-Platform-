@@ -44,7 +44,7 @@ const buildImageUrl = imagePath => {
   if (imagePath.startsWith('http://') || imagePath.startsWith('https://')) {
     return imagePath;
   }
-  const baseUrl = 'https://myfoodmitra-ecosystem.onrender.com'; // change to your server
+  const baseUrl = 'https://food-delivery-platform-ypx6.onrender.com'; // change to your server
   const path = imagePath.startsWith('/') ? imagePath : `/${imagePath}`;
   return `${baseUrl}${path}`;
 };

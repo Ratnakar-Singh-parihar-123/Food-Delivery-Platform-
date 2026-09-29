@@ -26,7 +26,7 @@ const COLORS = {
   success: '#15803d',
 };
 
-const STATIC_BASE = 'https://myfoodmitra-ecosystem.onrender.com';
+const STATIC_BASE = 'https://food-delivery-platform-ypx6.onrender.com';
 const DEFAULT_AVATAR =
   'https://ui-avatars.com/api/?name=Tiffin&background=ff5a1f&color=fff&size=100';
 

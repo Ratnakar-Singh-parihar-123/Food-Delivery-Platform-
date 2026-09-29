@@ -16,7 +16,7 @@ import Ionicons from '@react-native-vector-icons/ionicons';
 import { getExploreCategories } from '../../api/customerApi';
 // import { BASE_URL } from '../../config'; // Adjust path to your config
 // config.js
-export const BASE_URL = 'https://myfoodmitra-ecosystem.onrender.com'; // Replace with your actual API base URL
+export const BASE_URL = 'https://food-delivery-platform-ypx6.onrender.com'; // Replace with your actual API base URL
 
 const { width } = Dimensions.get('window');
 

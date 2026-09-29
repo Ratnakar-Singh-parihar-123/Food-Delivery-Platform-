@@ -28,7 +28,7 @@ const COLORS = {
   shadow: 'rgba(0,0,0,0.06)',
 };
 
-const STATIC_BASE = 'https://myfoodmitra-ecosystem.onrender.com';
+const STATIC_BASE = 'https://food-delivery-platform-ypx6.onrender.com';
 
 const buildImageUrl = path => {
   if (!path) return null;

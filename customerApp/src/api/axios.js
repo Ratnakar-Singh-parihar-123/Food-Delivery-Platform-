@@ -3,7 +3,7 @@ import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const api = axios.create({
-  baseURL: 'https://myfoodmitra-ecosystem.onrender.com/api/2026',
+  baseURL: 'https://food-delivery-platform-ypx6.onrender.com/api/2026',
   timeout: 10000,
   withCredentials: true,
   headers: {

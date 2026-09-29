@@ -13,6 +13,7 @@ import {
   TextInput,
   View,
   Dimensions,
+  Alert,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Ionicons from 'react-native-vector-icons/Ionicons';
@@ -37,7 +38,8 @@ const COLORS = {
 const OTP_LENGTH = 6;
 
 export default function RiderOtpVerificationScreen({ navigation, route }) {
-  const { phoneNumber, riderId } = route.params || {};
+  // const { phoneNumber, riderId } = route.params || {};
+  const { phoneNumber, riderId, otp: generatedOtp } = route.params || {};
   const [otp, setOtp] = useState(Array(OTP_LENGTH).fill(''));
   const [loading, setLoading] = useState(false);
   const [seconds, setSeconds] = useState(30);
@@ -67,6 +69,13 @@ export default function RiderOtpVerificationScreen({ navigation, route }) {
     ]).start();
   }, []);
 
+  useEffect(() => {
+    if (generatedOtp) {
+      Alert.alert('OTP Generated', `Your OTP is: ${generatedOtp}`, [
+        { text: 'OK' },
+      ]);
+    }
+  }, [generatedOtp]);
   useEffect(() => {
     if (seconds <= 0) return;
     const timer = setInterval(() => setSeconds(s => s - 1), 1000);
@@ -182,22 +191,65 @@ export default function RiderOtpVerificationScreen({ navigation, route }) {
     }
   };
 
+  // const handleResend = async () => {
+  //   if (seconds > 0) return;
+  //   try {
+  //     setLoading(true);
+  //     await riderSendOtp({ phone: `+91${phoneNumber}` });
+  //     setSeconds(30);
+  //     setOtp(Array(OTP_LENGTH).fill(''));
+  //     setError('');
+  //     inputRefs.current[0]?.focus();
+  //   } catch (err) {
+  //     setError('Failed to resend OTP. Please try again.');
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
   const handleResend = async () => {
     if (seconds > 0) return;
+
     try {
       setLoading(true);
-      await riderSendOtp({ phone: `+91${phoneNumber}` });
+
+      const response = await riderSendOtp({
+        phone: `+91${phoneNumber}`,
+      });
+
+      console.log('📱 OTP Response:', response);
+
+      // 🧪 TESTING ONLY
+      // const generatedOtp = response?.data?.otp;
+
+      // if (generatedOtp) {
+      //   Alert.alert('OTP Generated', `Your OTP is: ${generatedOtp}`, [
+      //     { text: 'OK' },
+      //   ]);
+      // } else {
+      //   Alert.alert('OTP Error', 'OTP was not received from backend.');
+      // }
+      const newOtp = response?.data?.otp;
+
+      if (newOtp) {
+        Alert.alert('New OTP Generated', `Your new OTP is: ${newOtp}`, [
+          { text: 'OK' },
+        ]);
+      }
+
       setSeconds(30);
       setOtp(Array(OTP_LENGTH).fill(''));
       setError('');
       inputRefs.current[0]?.focus();
     } catch (err) {
+      console.error('❌ Resend OTP Error:', err);
+
+      Alert.alert('Error', 'Failed to resend OTP. Please try again.');
+
       setError('Failed to resend OTP. Please try again.');
     } finally {
       setLoading(false);
     }
   };
-
   const formattedPhone = phoneNumber
     ? `+91 ${phoneNumber.slice(0, 5)} ${phoneNumber.slice(5)}`
     : '+91 00000 00000';

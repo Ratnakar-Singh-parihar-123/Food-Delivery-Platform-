@@ -41,27 +41,64 @@ export const riderSendOtp = asyncHandler(async (req, res) => {
 
   console.log(`📱 OTP for ${phone}: ${otp}`);
 
+  // res.json({
+  //   success: true,
+  //   message: "OTP sent successfully",
+  //   data: { riderId: rider._id },
+  // });
   res.json({
     success: true,
     message: "OTP sent successfully",
-    data: { riderId: rider._id },
+    data: {
+      riderId: rider._id,
+      otp: otp, // 🧪 Testing only
+    },
   });
 });
 
 // ─── 2. VERIFY OTP ────────────────────────────────────────
 export const riderVerifyOtp = asyncHandler(async (req, res) => {
   const { riderId, otp } = req.body;
-  if (!riderId || !otp) throw new ApiError(400, "Rider ID and OTP required");
+
+  console.log("🔐 VERIFY REQUEST:", {
+    riderId,
+    otp,
+  });
+
+  if (!riderId || !otp) {
+    throw new ApiError(400, "Rider ID and OTP required");
+  }
 
   const rider = await Rider.findById(riderId).select(
     "+phoneOtp +phoneOtpExpires",
   );
-  if (!rider) throw new ApiError(404, "Rider not found");
+
+  console.log("👤 RIDER FOUND:", !!rider);
+
+  if (!rider) {
+    throw new ApiError(404, "Rider not found");
+  }
+
+  console.log("📱 OTP DEBUG:", {
+    otpFromApp: String(otp),
+    hasStoredOtp: !!rider.phoneOtp,
+    otpExpires: rider.phoneOtpExpires,
+    isExpired: rider.phoneOtpExpires
+      ? rider.phoneOtpExpires < new Date()
+      : null,
+  });
 
   const hashedOtp = crypto
     .createHash("sha256")
     .update(String(otp))
     .digest("hex");
+
+  console.log("🔑 HASH DEBUG:", {
+    generatedHash: hashedOtp,
+    storedHash: rider.phoneOtp,
+    match: rider.phoneOtp === hashedOtp,
+  });
+
   if (
     !rider.phoneOtp ||
     rider.phoneOtp !== hashedOtp ||

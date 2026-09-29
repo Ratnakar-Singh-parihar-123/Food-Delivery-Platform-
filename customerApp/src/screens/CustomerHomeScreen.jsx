@@ -118,7 +118,7 @@ const fetchAddressFromCoords = async (latitude, longitude) => {
     const response = await axios.get(url, {
       headers: {
         'User-Agent':
-          'FoodMitra/1.0 (https://myfoodmitra-ecosystem.onrender.com)',
+          'FoodMitra/1.0 (https://food-delivery-platform-ypx6.onrender.com)',
       },
       timeout: 10000,
     });

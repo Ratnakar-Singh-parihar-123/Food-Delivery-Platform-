@@ -11,7 +11,7 @@ import { useAppUI } from '../context/AppUIContext';
 export default function FloatingCartBar() {
   const navigation = useNavigation();
   const insets = useSafeAreaInsets();
-  const BASE_URL = 'https://myfoodmitra-ecosystem.onrender.com';
+  const BASE_URL = 'https://food-delivery-platform-ypx6.onrender.com';
   const { cartCount, cartItems, cartTotal, showFloatingCart } = useAppUI();
 
   const translateY = useRef(new Animated.Value(120)).current;

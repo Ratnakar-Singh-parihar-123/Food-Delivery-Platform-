@@ -2,8 +2,8 @@ import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 // ─── Base URL ──────────────────────────────────────────────
-const SOCKET_URL = 'http://10.200.227.211:9000';
-const API_BASE = 'http://10.200.227.211:9000/api/2026';
+const SOCKET_URL = 'https://food-delivery-platform-ypx6.onrender.com';
+const API_BASE = 'https://food-delivery-platform-ypx6.onrender.com/api/2026';
 
 // ─── Create Axios Instance ──────────────────────────────
 const api = axios.create({

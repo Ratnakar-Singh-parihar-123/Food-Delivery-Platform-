@@ -53,8 +53,7 @@ const STATUS_COLORS = {
 };
 
 // ─── Helper: Image URL with base URL ─────────────────────
-const BASE_URL = 'http://10.200.227.211:9000'; // अपने server URL से replace करें
-const getImageUrl = url => {
+const BASE_URL = 'https://food-delivery-platform-ypx6.onrender.com'; 
   if (!url) return null;
   if (url.startsWith('http')) return url;
   if (url.startsWith('/')) return BASE_URL + url;

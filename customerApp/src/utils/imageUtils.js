@@ -1,4 +1,4 @@
-const STATIC_BASE = 'https://myfoodmitra-ecosystem.onrender.com';
+const STATIC_BASE = 'https://food-delivery-platform-ypx6.onrender.com';
 const DEFAULT_AVATAR =
   'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=200&q=80';
 
