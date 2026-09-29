@@ -33,12 +33,24 @@ const api = axios.create({
   timeout: 15000,
 });
 
+// api.interceptors.request.use(
+//   (config) => {
+//     const adminToken = localStorage.getItem("adminToken");
+
+//     if (adminToken) {
+//       config.headers.Authorization = `Bearer ${adminToken}`;
+//     }
+
+//     return config;
+//   },
+//   (error) => Promise.reject(error),
+// );
 api.interceptors.request.use(
   (config) => {
-    const adminToken = localStorage.getItem("adminToken");
+    const vendorToken = localStorage.getItem("vendorToken");
 
-    if (adminToken) {
-      config.headers.Authorization = `Bearer ${adminToken}`;
+    if (vendorToken) {
+      config.headers.Authorization = `Bearer ${vendorToken}`;
     }
 
     return config;
