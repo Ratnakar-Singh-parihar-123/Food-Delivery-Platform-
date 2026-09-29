@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "911773371987",
+    "project_id": "foodmitra-266d2",
+    "storage_bucket": "foodmitra-266d2.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:911773371987:android:a583c4911452356add80a6",
+        "android_client_info": {
+          "package_name": "com.customerapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBbJ7q_w_V8WopVeIsrboFz2MtHO29TA1U"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
