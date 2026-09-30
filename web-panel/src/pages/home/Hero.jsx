@@ -1,4 +1,6 @@
-import { motion } from "framer-motion";
+// pages/Home/Hero.jsx  (ya jahan bhi ye file hai)
+import { useEffect, useRef, useState } from "react";
+import { AnimatePresence, motion } from "framer-motion";
 import {
   ArrowRight,
   Star,
@@ -11,11 +13,47 @@ import {
   ShieldCheck,
   Sparkles,
   ChevronRight,
+  ChevronDown,
+  Download,
+  Smartphone,
+  UtensilsCrossed,
+  X,
 } from "lucide-react";
 
 import Button from "../../components/common/Button";
 import PhoneMockup from "../../components/common/PhoneMockup";
 import FloatingFood from "../../components/ui/FloatingFood";
+
+// ✅ APK URLs — files `public/` folder me rakho
+const customerApk = "/foodmitra-customer.apk";
+const deliveryApk = "/foodmitra-delivery.apk";
+
+const appDownloads = [
+  {
+    id: "customer",
+    title: "FoodMitra App",
+    subtitle: "Order food & more",
+    icon: Smartphone,
+    apk: customerApk,
+    available: true,
+  },
+  {
+    id: "delivery",
+    title: "FoodMitra Delivery Partner",
+    subtitle: "Deliver & earn",
+    icon: Bike,
+    apk: deliveryApk,
+    available: true,
+  },
+  {
+    id: "tiffin",
+    title: "FoodMitra Tiffin House",
+    subtitle: "Home-style meals",
+    icon: UtensilsCrossed,
+    apk: null,
+    available: false,
+  },
+];
 
 const containerVariants = {
   hidden: {},
@@ -28,51 +66,27 @@ const containerVariants = {
 };
 
 const fadeUp = {
-  hidden: {
-    opacity: 0,
-    y: 28,
-  },
+  hidden: { opacity: 0, y: 28 },
   visible: {
     opacity: 1,
     y: 0,
-    transition: {
-      duration: 0.65,
-      ease: [0.22, 1, 0.36, 1],
-    },
+    transition: { duration: 0.65, ease: [0.22, 1, 0.36, 1] },
   },
 };
 
 const fadeIn = {
-  hidden: {
-    opacity: 0,
-    scale: 0.96,
-  },
+  hidden: { opacity: 0, scale: 0.96 },
   visible: {
     opacity: 1,
     scale: 1,
-    transition: {
-      duration: 0.75,
-      ease: [0.22, 1, 0.36, 1],
-    },
+    transition: { duration: 0.75, ease: [0.22, 1, 0.36, 1] },
   },
 };
 
 const categories = [
-  {
-    name: "Pizza",
-    emoji: "🍕",
-    bg: "bg-orange-50",
-  },
-  {
-    name: "Burger",
-    emoji: "🍔",
-    bg: "bg-yellow-50",
-  },
-  {
-    name: "Biryani",
-    emoji: "🍛",
-    bg: "bg-amber-50",
-  },
+  { name: "Pizza", emoji: "🍕", bg: "bg-orange-50" },
+  { name: "Burger", emoji: "🍔", bg: "bg-yellow-50" },
+  { name: "Biryani", emoji: "🍛", bg: "bg-amber-50" },
 ];
 
 const restaurantCards = [
@@ -87,6 +101,56 @@ const restaurantCards = [
 ];
 
 export default function Hero() {
+  const [downloadOpen, setDownloadOpen] = useState(false);
+  const [toast, setToast] = useState("");
+  const downloadRef = useRef(null);
+
+  // Close dropdown on outside click
+  useEffect(() => {
+    const onClickOutside = (e) => {
+      if (downloadRef.current && !downloadRef.current.contains(e.target)) {
+        setDownloadOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", onClickOutside);
+    return () => document.removeEventListener("mousedown", onClickOutside);
+  }, []);
+
+  // Toast auto-hide
+  useEffect(() => {
+    if (!toast) return;
+    const t = setTimeout(() => setToast(""), 2500);
+    return () => clearTimeout(t);
+  }, [toast]);
+
+  // APK download handler
+  const handleDownload = (app) => {
+    if (!app.available || !app.apk) {
+      setToast(
+        "🚧 Coming Soon!** We’re working hard to bring you this app. Stay tuned for the launch!",
+      );
+      setDownloadOpen(false);
+      return;
+    }
+
+    const link = document.createElement("a");
+    link.href = app.apk;
+    link.download = `${app.title.replace(/\s+/g, "-").toLowerCase()}.apk`;
+    link.setAttribute("target", "_blank");
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+
+    setDownloadOpen(false);
+  };
+
+  // Explore Restaurants → Coming Soon
+  const handleExploreRestaurants = () => {
+    setToast(
+      "🍽️ **Coming Soon!** The Restaurants section is currently under development and will be available soon",
+    );
+  };
+
   return (
     <section
       id="home"
@@ -95,54 +159,13 @@ export default function Hero() {
       {/* =========================================================
           BACKGROUND DECORATIONS
       ========================================================== */}
-
       <div className="absolute inset-0 pointer-events-none">
-        {/* Main glow */}
-        <div
-          className="
-            absolute
-            -left-32 top-12
-            h-[420px] w-[420px]
-            rounded-full
-            bg-brand-primary/10
-            blur-[110px]
-          "
-        />
+        <div className="absolute -left-32 top-12 h-[420px] w-[420px] rounded-full bg-brand-primary/10 blur-[110px]" />
+        <div className="absolute -right-32 top-1/3 h-[500px] w-[500px] rounded-full bg-brand-secondary/15 blur-[120px]" />
+        <div className="absolute bottom-[-200px] left-1/2 h-[500px] w-[700px] -translate-x-1/2 rounded-full bg-orange-100/50 blur-[130px]" />
 
-        <div
-          className="
-            absolute
-            -right-32 top-1/3
-            h-[500px] w-[500px]
-            rounded-full
-            bg-brand-secondary/15
-            blur-[120px]
-          "
-        />
+        <div className="absolute inset-0 opacity-[0.035] [background-image:linear-gradient(to_right,#111_1px,transparent_1px),linear-gradient(to_bottom,#111_1px,transparent_1px)] [background-size:42px_42px]" />
 
-        <div
-          className="
-            absolute
-            bottom-[-200px] left-1/2
-            h-[500px] w-[700px]
-            -translate-x-1/2
-            rounded-full
-            bg-orange-100/50
-            blur-[130px]
-          "
-        />
-
-        {/* Grid */}
-        <div
-          className="
-            absolute inset-0
-            opacity-[0.035]
-            [background-image:linear-gradient(to_right,#111_1px,transparent_1px),linear-gradient(to_bottom,#111_1px,transparent_1px)]
-            [background-size:42px_42px]
-          "
-        />
-
-        {/* Decorative dots */}
         <div className="absolute left-[8%] top-[22%] h-2 w-2 rounded-full bg-brand-primary/40" />
         <div className="absolute left-[14%] top-[32%] h-1.5 w-1.5 rounded-full bg-brand-secondary/50" />
         <div className="absolute right-[8%] top-[18%] h-2 w-2 rounded-full bg-brand-primary/30" />
@@ -152,21 +175,11 @@ export default function Hero() {
       {/* =========================================================
           MAIN CONTENT
       ========================================================== */}
-
       <div className="relative z-10 flex items-center min-h-screen px-4 pb-16 mx-auto max-w-7xl pt-28 sm:px-6 lg:px-8 lg:pb-20 lg:pt-32">
-        <div
-          className="
-            grid w-full
-            items-center
-            gap-14
-            lg:grid-cols-[1.05fr_0.95fr]
-            xl:gap-20
-          "
-        >
+        <div className="grid w-full items-center gap-14 lg:grid-cols-[1.05fr_0.95fr] xl:gap-20">
           {/* =====================================================
               LEFT CONTENT
           ====================================================== */}
-
           <motion.div
             variants={containerVariants}
             initial="hidden"
@@ -175,31 +188,11 @@ export default function Hero() {
           >
             {/* Launch Badge */}
             <motion.div variants={fadeUp}>
-              <div
-                className="
-                  mb-7
-                  inline-flex
-                  items-center
-                  gap-2
-                  rounded-full
-                  border border-brand-primary/15
-                  bg-white/80
-                  px-3.5
-                  py-2
-                  text-sm
-                  font-semibold
-                  text-brand-dark
-                  shadow-sm
-                  shadow-orange-100
-                  backdrop-blur-xl
-                "
-              >
+              <div className="mb-7 inline-flex items-center gap-2 rounded-full border border-brand-primary/15 bg-white/80 px-3.5 py-2 text-sm font-semibold text-brand-dark shadow-sm shadow-orange-100 backdrop-blur-xl">
                 <span className="flex items-center justify-center rounded-full h-7 w-7 bg-brand-primary/10 text-brand-primary">
                   <Sparkles className="h-3.5 w-3.5" />
                 </span>
-
                 <span>Now delivering in your city</span>
-
                 <span className="relative flex w-2 h-2 ml-1">
                   <span className="absolute inline-flex w-full h-full bg-green-500 rounded-full opacity-50 animate-ping" />
                   <span className="relative inline-flex w-2 h-2 bg-green-500 rounded-full" />
@@ -210,18 +203,7 @@ export default function Hero() {
             {/* Heading */}
             <motion.h1
               variants={fadeUp}
-              className="
-                max-w-3xl
-                text-4xl
-                font-extrabold
-                leading-[1.08]
-                tracking-[-0.035em]
-                text-brand-dark
-                sm:text-5xl
-                md:text-6xl
-                lg:text-[64px]
-                xl:text-[72px]
-              "
+              className="max-w-3xl text-4xl font-extrabold leading-[1.08] tracking-[-0.035em] text-brand-dark sm:text-5xl md:text-6xl lg:text-[64px] xl:text-[72px]"
             >
               Your city's
               <span className="relative inline-block mx-2 text-brand-primary">
@@ -253,41 +235,99 @@ export default function Hero() {
               simply.
             </motion.p>
 
-            {/* CTA Buttons */}
+            {/* =====================================================
+                CTA Buttons — Download dropdown + Explore
+            ====================================================== */}
             <motion.div
               variants={fadeUp}
               className="flex flex-col gap-3 mt-8 sm:flex-row sm:items-center"
             >
-              <Button
-                variant="primary"
-                className="text-base font-semibold shadow-xl group min-h-14 rounded-2xl px-7 shadow-brand-primary/50"
-              >
-                Download App
-                <ArrowRight className="w-5 h-5 ml-2 transition-transform duration-300 group-hover:translate-x-1" />
-              </Button>
+              {/* 👇 Download App with Dropdown */}
+              <div ref={downloadRef} className="relative w-full sm:w-auto">
+                <Button
+                  variant="primary"
+                  onClick={() => setDownloadOpen((p) => !p)}
+                  className="w-full text-base font-semibold shadow-xl group min-h-14 rounded-2xl px-7 shadow-brand-primary/50 sm:w-auto"
+                >
+                  <Download className="w-5 h-5 mr-2 transition-transform duration-300 group-hover:translate-y-0.5" />
+                  Download App
+                  <ChevronDown
+                    className={`w-4 h-4 ml-2 transition-transform duration-200 ${
+                      downloadOpen ? "rotate-180" : ""
+                    }`}
+                  />
+                </Button>
 
+                {/* Dropdown */}
+                <AnimatePresence>
+                  {downloadOpen && (
+                    <motion.div
+                      initial={{ opacity: 0, y: 10, scale: 0.97 }}
+                      animate={{ opacity: 1, y: 0, scale: 1 }}
+                      exit={{ opacity: 0, y: 8, scale: 0.97 }}
+                      transition={{ duration: 0.18 }}
+                      className="absolute left-0 top-full z-50 mt-2 w-[290px] sm:w-[320px]"
+                    >
+                      <div className="p-2 border border-gray-100 shadow-2xl rounded-2xl bg-white/95 shadow-orange-500/10 backdrop-blur-xl">
+                        <p className="px-3 py-2 text-[11px] font-bold uppercase tracking-wider text-gray-400">
+                          Choose Your App
+                        </p>
+
+                        {appDownloads.map((app) => {
+                          const Icon = app.icon;
+                          return (
+                            <button
+                              key={app.id}
+                              type="button"
+                              onClick={() => handleDownload(app)}
+                              className="flex items-center w-full gap-3 px-3 py-3 text-left transition-colors group/item rounded-xl hover:bg-orange-50"
+                            >
+                              <span
+                                className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-xl ${
+                                  app.available
+                                    ? "bg-gradient-to-br from-orange-100 to-orange-50 text-orange-600"
+                                    : "bg-gray-100 text-gray-400"
+                                }`}
+                              >
+                                <Icon className="w-5 h-5" />
+                              </span>
+
+                              <div className="flex-1 min-w-0">
+                                <p
+                                  className={`text-sm font-bold ${
+                                    app.available
+                                      ? "text-gray-800 group-hover/item:text-orange-600"
+                                      : "text-gray-500"
+                                  }`}
+                                >
+                                  {app.title}
+                                </p>
+                                <p className="truncate text-[11px] text-gray-400">
+                                  {app.subtitle}
+                                </p>
+                              </div>
+
+                              {app.available ? (
+                                <Download className="w-4 h-4 text-orange-500" />
+                              ) : (
+                                <span className="rounded-full bg-gray-400 px-2 py-0.5 text-[10px] font-bold text-white">
+                                  Soon
+                                </span>
+                              )}
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
+
+              {/* 👇 Explore Restaurants — Coming Soon */}
               <button
                 type="button"
-                className="
-                  group
-                  inline-flex
-                  min-h-14
-                  items-center
-                  justify-center
-                  rounded-2xl
-                  border border-gray-200
-                  bg-white
-                  px-7
-                  text-base
-                  font-semibold
-                  text-brand-dark
-                  shadow-sm
-                  transition-all
-                  duration-300
-                  hover:-translate-y-0.5
-                  hover:border-brand-primary/30
-                  hover:shadow-lg
-                "
+                onClick={handleExploreRestaurants}
+                className="group inline-flex min-h-14 items-center justify-center rounded-2xl border border-gray-200 bg-white px-7 text-base font-semibold text-brand-dark shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:border-brand-primary/30 hover:shadow-lg w-full sm:w-auto"
               >
                 Explore Restaurants
                 <ChevronRight className="w-5 h-5 ml-1 text-gray-400 transition-all group-hover:translate-x-1 group-hover:text-brand-primary" />
@@ -299,7 +339,6 @@ export default function Hero() {
               variants={fadeUp}
               className="flex flex-col gap-5 pt-6 border-t mt-9 border-gray-200/70 sm:flex-row sm:items-center"
             >
-              {/* Avatars */}
               <div className="flex items-center">
                 <div className="flex -space-x-3">
                   {[1, 2, 3, 4].map((item) => (
@@ -307,37 +346,11 @@ export default function Hero() {
                       key={item}
                       src={`https://ui-avatars.com/api/?name=User+${item}&background=e85d3a&color=ffffff&bold=true`}
                       alt={`Customer ${item}`}
-                      className="
-                        h-10
-                        w-10
-                        rounded-full
-                        border-[3px]
-                        border-white
-                        object-cover
-                        shadow-sm
-                      "
+                      className="h-10 w-10 rounded-full border-[3px] border-white object-cover shadow-sm"
                     />
                   ))}
                 </div>
-
-                <div
-                  className="
-                    -ml-2
-                    flex
-                    h-10
-                    min-w-10
-                    items-center
-                    justify-center
-                    rounded-full
-                    border-[3px]
-                    border-white
-                    bg-brand-dark
-                    px-2
-                    text-[11px]
-                    font-bold
-                    text-white
-                  "
-                >
+                <div className="-ml-2 flex h-10 min-w-10 items-center justify-center rounded-full border-[3px] border-white bg-brand-dark px-2 text-[11px] font-bold text-white">
                   5K+
                 </div>
               </div>
@@ -350,12 +363,10 @@ export default function Hero() {
                       className="w-4 h-4 text-yellow-400 fill-yellow-400"
                     />
                   ))}
-
                   <span className="ml-1 text-sm font-bold text-brand-dark">
                     4.8
                   </span>
                 </div>
-
                 <p className="mt-1 text-sm text-gray-500">
                   Loved by local food customers
                 </p>
@@ -371,12 +382,10 @@ export default function Hero() {
                 icon={<Clock3 className="w-4 h-4" />}
                 title="Fast delivery"
               />
-
               <MiniFeature
                 icon={<Navigation className="w-4 h-4" />}
                 title="Live tracking"
               />
-
               <MiniFeature
                 icon={<ShieldCheck className="w-4 h-4" />}
                 title="Secure orders"
@@ -387,176 +396,64 @@ export default function Hero() {
           {/* =====================================================
               RIGHT VISUAL
           ====================================================== */}
-
           <motion.div
             variants={fadeIn}
             initial="hidden"
             animate="visible"
-            className="
-              relative
-              mx-auto
-              flex
-              w-full
-              max-w-[560px]
-              justify-center
-              lg:max-w-none
-            "
+            className="relative mx-auto flex w-full max-w-[560px] justify-center lg:max-w-none"
           >
-            {/* Large behind phone glow */}
-            <div
-              className="
-                absolute
-                left-1/2 top-1/2
-                h-[500px] w-[500px]
-                -translate-x-1/2
-                -translate-y-1/2
-                rounded-full
-                bg-gradient-to-br
-                from-brand-primary/15
-                via-brand-secondary/10
-                to-transparent
-                blur-2xl
-              "
-            />
+            <div className="absolute left-1/2 top-1/2 h-[500px] w-[500px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-gradient-to-br from-brand-primary/15 via-brand-secondary/10 to-transparent blur-2xl" />
 
-            {/* Rotating background ring */}
             <motion.div
               animate={{ rotate: 360 }}
-              transition={{
-                duration: 40,
-                repeat: Infinity,
-                ease: "linear",
-              }}
-              className="
-                absolute
-                left-1/2 top-1/2
-                h-[430px] w-[430px]
-                -translate-x-1/2
-                -translate-y-1/2
-                rounded-full
-                border border-dashed
-                border-brand-primary/15
-              "
+              transition={{ duration: 40, repeat: Infinity, ease: "linear" }}
+              className="absolute left-1/2 top-1/2 h-[430px] w-[430px] -translate-x-1/2 -translate-y-1/2 rounded-full border border-dashed border-brand-primary/15"
             />
 
-            {/* Phone */}
             <motion.div
-              animate={{
-                y: [0, -8, 0],
-              }}
-              transition={{
-                duration: 5,
-                repeat: Infinity,
-                ease: "easeInOut",
-              }}
-              className="
-                relative
-                z-20
-                drop-shadow-[0_45px_55px_rgba(26,26,46,0.18)]
-              "
+              animate={{ y: [0, -8, 0] }}
+              transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
+              className="relative z-20 drop-shadow-[0_45px_55px_rgba(26,26,46,0.18)]"
             >
               <PhoneMockup>
                 <PhoneAppPreview />
               </PhoneMockup>
             </motion.div>
 
-            {/* Floating food items */}
             <FloatingFood
               icon="🍕"
               label="Pizza"
-              className="
-                absolute
-                right-0
-                top-[5%]
-                z-30
-                animate-float
-                sm:right-[-5%]
-                xl:right-[-9%]
-              "
+              className="absolute right-0 top-[5%] z-30 animate-float sm:right-[-5%] xl:right-[-9%]"
             />
-
             <FloatingFood
               icon="🍔"
               label="Burger"
-              className="
-                absolute
-                bottom-[2%]
-                left-0
-                z-30
-                animate-float-slow
-                sm:left-[-3%]
-                xl:left-[-10%]
-              "
+              className="absolute bottom-[2%] left-0 z-30 animate-float-slow sm:left-[-3%] xl:left-[-10%]"
             />
-
             <FloatingFood
               icon="🍛"
               label="Biryani"
-              className="
-                absolute
-                right-[-3%]
-                top-[38%]
-                z-30
-                hidden
-                animate-float-slow
-                md:block
-                xl:right-[-15%]
-              "
+              className="absolute right-[-3%] top-[38%] z-30 hidden animate-float-slow md:block xl:right-[-15%]"
             />
-
             <FloatingFood
               icon="🎂"
               label="Cake"
-              className="
-                absolute
-                bottom-[27%]
-                left-[-5%]
-                z-30
-                hidden
-                animate-float
-                md:block
-                xl:left-[-16%]
-              "
+              className="absolute bottom-[27%] left-[-5%] z-30 hidden animate-float md:block xl:left-[-16%]"
             />
 
-            {/* Order confirmed card */}
             <motion.div
-              animate={{
-                y: [0, -5, 0],
-              }}
-              transition={{
-                duration: 4,
-                repeat: Infinity,
-                ease: "easeInOut",
-              }}
-              className="
-                absolute
-                -right-3
-                bottom-[20%]
-                z-40
-                hidden
-                w-[205px]
-                rounded-2xl
-                border border-white/80
-                bg-white/90
-                p-3.5
-                shadow-2xl
-                shadow-gray-900/10
-                backdrop-blur-xl
-                lg:block
-                xl:-right-16
-              "
+              animate={{ y: [0, -5, 0] }}
+              transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+              className="absolute -right-3 bottom-[20%] z-40 hidden w-[205px] rounded-2xl border border-white/80 bg-white/90 p-3.5 shadow-2xl shadow-gray-900/10 backdrop-blur-xl lg:block xl:-right-16"
             >
               <div className="flex items-center gap-3">
                 <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-green-50">
                   <CheckCircle2 className="w-5 h-5 text-green-600" />
                 </div>
-
                 <div>
                   <p className="text-sm font-bold text-brand-dark">
                     Order confirmed
                   </p>
-
                   <p className="text-xs text-gray-500">
                     Restaurant is preparing
                   </p>
@@ -564,46 +461,24 @@ export default function Hero() {
               </div>
             </motion.div>
 
-            {/* Delivery card */}
             <motion.div
-              animate={{
-                y: [0, 6, 0],
-              }}
+              animate={{ y: [0, 6, 0] }}
               transition={{
                 duration: 4.5,
                 repeat: Infinity,
                 ease: "easeInOut",
               }}
-              className="
-                absolute
-                -left-3
-                top-[18%]
-                z-40
-                hidden
-                w-[190px]
-                rounded-2xl
-                border border-white/80
-                bg-white/90
-                p-3.5
-                shadow-2xl
-                shadow-gray-900/10
-                backdrop-blur-xl
-                lg:block
-                xl:-left-20
-              "
+              className="absolute -left-3 top-[18%] z-40 hidden w-[190px] rounded-2xl border border-white/80 bg-white/90 p-3.5 shadow-2xl shadow-gray-900/10 backdrop-blur-xl lg:block xl:-left-20"
             >
               <div className="flex items-center gap-3">
                 <div className="relative flex items-center justify-center w-10 h-10 rounded-xl bg-brand-primary/10">
                   <Bike className="w-5 h-5 text-brand-primary" />
-
                   <span className="absolute w-3 h-3 bg-green-500 border-2 border-white rounded-full -right-1 -top-1" />
                 </div>
-
                 <div>
                   <p className="text-sm font-bold text-brand-dark">
                     Rider nearby
                   </p>
-
                   <p className="flex items-center gap-1 text-xs text-gray-500">
                     <Clock3 className="w-3 h-3" />
                     12 min away
@@ -612,29 +487,8 @@ export default function Hero() {
               </div>
             </motion.div>
 
-            {/* Rating */}
-            <div
-              className="
-                absolute
-                right-[2%]
-                top-[65%]
-                z-30
-                hidden
-                rounded-full
-                border border-white/80
-                bg-white/90
-                px-4
-                py-2
-                shadow-lg
-                backdrop-blur-lg
-                sm:flex
-                items-center
-                gap-2
-                xl:right-[-9%]
-              "
-            >
+            <div className="absolute right-[2%] top-[65%] z-30 hidden rounded-full border border-white/80 bg-white/90 px-4 py-2 shadow-lg backdrop-blur-lg sm:flex items-center gap-2 xl:right-[-9%]">
               <Star className="w-4 h-4 text-yellow-400 fill-yellow-400" />
-
               <span className="text-sm font-bold text-brand-dark">
                 4.8 Rating
               </span>
@@ -645,6 +499,22 @@ export default function Hero() {
 
       {/* Bottom decorative fade */}
       <div className="absolute bottom-0 left-0 w-full h-24 pointer-events-none bg-gradient-to-t from-white to-transparent" />
+
+      {/* 👇 Coming Soon Toast */}
+      <AnimatePresence>
+        {toast && (
+          <motion.div
+            initial={{ opacity: 0, y: 50, scale: 0.95 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: 20, scale: 0.95 }}
+            className="fixed bottom-6 left-1/2 z-[100] -translate-x-1/2 px-4"
+          >
+            <div className="flex items-center gap-2 px-5 py-3 text-sm font-semibold text-white bg-gray-900 shadow-2xl rounded-2xl">
+              {toast}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </section>
   );
 }
@@ -652,114 +522,62 @@ export default function Hero() {
 /* =========================================================
    PHONE APP PREVIEW
 ========================================================== */
-
 function PhoneAppPreview() {
   return (
     <div className="space-y-3 bg-gray-50/80 p-2.5">
-      {/* Header */}
       <div className="flex items-start justify-between">
         <div>
           <p className="text-[9px] font-medium text-gray-400">Delivering to</p>
-
           <div className="mt-0.5 flex items-center gap-1">
             <MapPin className="h-3.5 w-3.5 text-brand-primary" />
-
             <span className="text-xs font-bold text-brand-dark">
               Main Market
             </span>
           </div>
         </div>
-
-        <div className="flex items-center justify-center w-8 h-8 bg-white rounded-full shadow-sm ">
+        <div className="flex items-center justify-center w-8 h-8 bg-white rounded-full shadow-sm">
           🔔
         </div>
       </div>
 
-      {/* Search */}
       <div className="relative">
-        <Search
-          className="
-            absolute
-            left-3
-            top-1/2
-            h-3.5 w-3.5
-            -translate-y-1/2
-            text-gray-400
-          "
-        />
-
+        <Search className="absolute left-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-gray-400" />
         <input
           readOnly
           type="text"
           placeholder="Search food or restaurant..."
-          className="
-            w-full
-            rounded-xl
-            border border-gray-100
-            bg-white
-            py-2.5
-            pl-9
-            pr-3
-            text-[10px]
-            outline-none
-          "
+          className="w-full rounded-xl border border-gray-100 bg-white py-2.5 pl-9 pr-3 text-[10px] outline-none"
         />
       </div>
 
-      {/* Offer Banner */}
-      <div
-        className="
-          relative
-          overflow-hidden
-          rounded-2xl
-          bg-gradient-to-br
-          from-brand-primary
-          to-orange-400
-          px-3
-          py-3.5
-          text-white
-        "
-      >
+      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-brand-primary to-orange-400 px-3 py-3.5 text-white">
         <div className="relative z-10">
           <p className="text-[9px] font-medium text-white/80">FIRST ORDER</p>
-
           <p className="mt-0.5 text-lg font-extrabold">50% OFF</p>
-
           <p className="mt-0.5 text-[8px] text-white/85">
             On selected restaurants
           </p>
         </div>
-
         <div className="absolute w-20 h-20 rounded-full -right-7 -top-5 bg-white/10" />
-
         <div className="absolute text-4xl bottom-1 right-3">🍔</div>
       </div>
 
-      {/* Categories */}
       <div>
         <div className="flex items-center justify-between mb-2">
           <p className="text-[10px] font-bold text-brand-dark">
             What's on your mind?
           </p>
-
           <span className="text-[8px] font-semibold text-brand-primary">
             See all
           </span>
         </div>
-
         <div className="grid grid-cols-3 gap-2">
           {categories.map((category) => (
             <div
               key={category.name}
-              className={`
-                ${category.bg}
-                rounded-xl
-                p-2
-                text-center
-              `}
+              className={`${category.bg} rounded-xl p-2 text-center`}
             >
               <div className="text-xl">{category.emoji}</div>
-
               <p className="mt-1 text-[8px] font-semibold text-brand-dark">
                 {category.name}
               </p>
@@ -768,16 +586,13 @@ function PhoneAppPreview() {
         </div>
       </div>
 
-      {/* Restaurant */}
       <div>
         <div className="flex items-center justify-between mb-2">
           <p className="text-[10px] font-bold text-brand-dark">
             Popular near you
           </p>
-
           <span className="text-[8px] text-brand-primary">View all</span>
         </div>
-
         {restaurantCards.map((restaurant) => (
           <div
             key={restaurant.name}
@@ -789,70 +604,27 @@ function PhoneAppPreview() {
                 alt={restaurant.name}
                 className="object-cover w-full h-full"
               />
-
-              <div
-                className="
-                  absolute
-                  bottom-2
-                  left-2
-                  rounded-md
-                  bg-brand-dark/80
-                  px-2
-                  py-1
-                  text-[8px]
-                  font-medium
-                  text-white
-                  backdrop-blur-sm
-                "
-              >
+              <div className="absolute bottom-2 left-2 rounded-md bg-brand-dark/80 px-2 py-1 text-[8px] font-medium text-white backdrop-blur-sm">
                 FREE DELIVERY
               </div>
             </div>
-
             <div className="p-2.5">
               <div className="flex items-start justify-between">
                 <div>
                   <p className="text-[10px] font-bold text-brand-dark">
                     {restaurant.name}
                   </p>
-
                   <p className="mt-0.5 text-[8px] text-gray-400">
                     {restaurant.cuisine}
                   </p>
                 </div>
-
-                <div
-                  className="
-                    flex
-                    items-center
-                    gap-0.5
-                    rounded-md
-                    bg-green-600
-                    px-1.5
-                    py-1
-                    text-[8px]
-                    font-bold
-                    text-white
-                  "
-                >
+                <div className="flex items-center gap-0.5 rounded-md bg-green-600 px-1.5 py-1 text-[8px] font-bold text-white">
                   {restaurant.rating}
                   <Star className="w-2 h-2 fill-white" />
                 </div>
               </div>
-
-              <div
-                className="
-                  mt-2
-                  flex
-                  items-center
-                  gap-1
-                  text-[8px]
-                  font-medium
-                  text-gray-500
-                "
-              >
+              <div className="mt-2 flex items-center gap-1 text-[8px] font-medium text-gray-500">
                 <Clock3 className="h-2.5 w-2.5" />
-
                 {restaurant.time}
               </div>
             </div>
@@ -860,7 +632,6 @@ function PhoneAppPreview() {
         ))}
       </div>
 
-      {/* Bottom Nav */}
       <div className="grid grid-cols-4 px-2 py-2 mt-2 bg-white border border-gray-100 shadow-sm rounded-2xl">
         {[
           ["🏠", "Home"],
@@ -870,13 +641,11 @@ function PhoneAppPreview() {
         ].map(([icon, label], index) => (
           <div
             key={label}
-            className={`
-              text-center
-              ${index === 0 ? "text-brand-primary" : "text-gray-400"}
-            `}
+            className={`text-center ${
+              index === 0 ? "text-brand-primary" : "text-gray-400"
+            }`}
           >
             <div className="text-xs">{icon}</div>
-
             <p className="mt-0.5 text-[7px] font-semibold">{label}</p>
           </div>
         ))}
@@ -888,29 +657,12 @@ function PhoneAppPreview() {
 /* =========================================================
    SMALL FEATURE
 ========================================================== */
-
 function MiniFeature({ icon, title }) {
   return (
-    <div
-      className="
-        flex
-        items-center
-        gap-2
-        rounded-xl
-        border border-gray-200/70
-        bg-white/60
-        px-3
-        py-2.5
-        text-sm
-        font-medium
-        text-gray-600
-        backdrop-blur-md
-      "
-    >
+    <div className="flex items-center gap-2 rounded-xl border border-gray-200/70 bg-white/60 px-3 py-2.5 text-sm font-medium text-gray-600 backdrop-blur-md">
       <div className="flex items-center justify-center rounded-lg h-7 w-7 bg-brand-primary/10 text-brand-primary">
         {icon}
       </div>
-
       {title}
     </div>
   );

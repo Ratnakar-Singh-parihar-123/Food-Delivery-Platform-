@@ -5,7 +5,7 @@
 // In production, you might use an environment variable.
 const STATIC_BASE =
   import.meta.env?.VITE_STATIC_BASE ||
-  "https://myfoodmitra-ecosystem.onrender.com";
+  "https://food-delivery-platform-ypx6.onrender.com";
 
 // ─── Build a full image URL from a relative path ──────────
 export const buildImageUrl = (imagePath) => {

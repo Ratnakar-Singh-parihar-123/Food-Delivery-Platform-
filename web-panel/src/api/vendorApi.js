@@ -8,7 +8,7 @@ export const SOCKET_URL =
   import.meta.env.VITE_SOCKET_URL || "http://localhost:9000";
 
 // ─── Axios instance ──────────────────────────────────────────
-const api = axios.create({
+const api = axios.create({    
   baseURL: API_BASE,
   withCredentials: true,
 });

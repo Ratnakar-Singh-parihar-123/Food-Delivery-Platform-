@@ -984,7 +984,7 @@ const buildImageUrl = (imagePath) => {
     return imagePath;
   const baseUrl =
     import.meta.env?.VITE_STATIC_BASE ||
-    "https://myfoodmitra-ecosystem.onrender.com";
+    "https://food-delivery-platform-ypx6.onrender.com";
   const path = imagePath.startsWith("/") ? imagePath : `/${imagePath}`;
   return `${baseUrl}${path}`;
 };

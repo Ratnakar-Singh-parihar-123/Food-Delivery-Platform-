@@ -1,4 +1,6 @@
-import { motion } from "framer-motion";
+// pages/Home/Riders.jsx  (jahan ye file hai)
+import { useEffect, useState } from "react";
+import { AnimatePresence, motion } from "framer-motion";
 import {
   ArrowRight,
   BadgeCheck,
@@ -6,6 +8,7 @@ import {
   Check,
   ChevronRight,
   Clock3,
+  Download,
   Headphones,
   IndianRupee,
   MapPin,
@@ -20,6 +23,9 @@ import {
 
 import SectionHeading from "../../components/common/SectionHeading";
 import Button from "../../components/common/Button";
+
+// ✅ Delivery Partner APK — file `public/` folder me rakho
+const deliveryApk = "/foodmitra-delivery.apk";
 
 const riderBenefits = [
   {
@@ -58,28 +64,49 @@ const joiningSteps = [
 const containerVariants = {
   hidden: {},
   visible: {
-    transition: {
-      staggerChildren: 0.1,
-    },
+    transition: { staggerChildren: 0.1 },
   },
 };
 
 const itemVariants = {
-  hidden: {
-    opacity: 0,
-    y: 25,
-  },
+  hidden: { opacity: 0, y: 25 },
   visible: {
     opacity: 1,
     y: 0,
-    transition: {
-      duration: 0.5,
-      ease: "easeOut",
-    },
+    transition: { duration: 0.5, ease: "easeOut" },
   },
 };
 
 export default function Riders() {
+  const [toast, setToast] = useState("");
+
+  // Toast auto-hide
+  useEffect(() => {
+    if (!toast) return;
+    const t = setTimeout(() => setToast(""), 2600);
+    return () => clearTimeout(t);
+  }, [toast]);
+
+  // APK download
+  const handleDownloadApk = () => {
+    const link = document.createElement("a");
+    link.href = deliveryApk;
+    link.download = "foodmitra-delivery-partner.apk";
+    link.setAttribute("target", "_blank");
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
+  // Coming Soon triggers
+  const handleJoinPartner = () => {
+    setToast("🚧 Coming Soon! Rider onboarding will be live very soon.");
+  };
+
+  const handleLearnMore = () => {
+    setToast("🚧 Coming Soon! Rider guide is being prepared.");
+  };
+
   return (
     <section
       id="riders"
@@ -88,28 +115,21 @@ export default function Riders() {
       {/* Background decoration */}
       <div className="absolute inset-0 pointer-events-none">
         <div className="absolute -left-52 top-20 h-[420px] w-[420px] rounded-full bg-orange-100/70 blur-3xl" />
-
         <div className="absolute -right-52 bottom-0 h-[450px] w-[450px] rounded-full bg-green-100/50 blur-3xl" />
-
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(249,115,22,0.06)_1px,transparent_1px)] bg-[size:28px_28px]" />
       </div>
 
       <div className="relative px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
         <div className="grid items-center gap-16 lg:grid-cols-2 lg:gap-20">
-          {/* Rider image section */}
+          {/* ─── Rider image section ─── */}
           <motion.div
             initial={{ opacity: 0, x: -40, scale: 0.96 }}
             whileInView={{ opacity: 1, x: 0, scale: 1 }}
             viewport={{ once: true, amount: 0.2 }}
-            transition={{
-              duration: 0.7,
-              ease: "easeOut",
-            }}
+            transition={{ duration: 0.7, ease: "easeOut" }}
             className="relative mx-auto w-full max-w-[560px]"
           >
-            {/* Decorative shape */}
             <div className="absolute -left-6 top-12 h-[88%] w-[90%] rotate-[-4deg] rounded-[42px] bg-gradient-to-br from-orange-500 to-red-500 opacity-15" />
-
             <div className="absolute -right-5 bottom-12 h-[70%] w-[70%] rotate-[5deg] rounded-[40px] border border-dashed border-orange-300" />
 
             {/* Main image */}
@@ -119,7 +139,6 @@ export default function Riders() {
                 alt="Delivery partner riding a scooter"
                 className="h-[560px] w-full object-cover object-center sm:h-[650px]"
               />
-
               <div className="absolute inset-0 bg-gradient-to-t from-gray-950/85 via-transparent to-gray-950/10" />
 
               {/* Image bottom content */}
@@ -154,18 +173,15 @@ export default function Riders() {
                 <span className="flex items-center justify-center h-11 w-11 rounded-xl bg-green-50">
                   <TrendingUp className="w-5 h-5 text-green-600" />
                 </span>
-
                 <div>
                   <p className="text-[10px] font-medium text-gray-400">
                     Today&apos;s earnings
                   </p>
-
                   <p className="mt-0.5 text-lg font-extrabold text-gray-900">
                     ₹520
                   </p>
                 </div>
               </div>
-
               <div className="mt-3 flex items-center gap-1.5 rounded-lg bg-green-50 px-2 py-1.5 text-[10px] font-bold text-green-600">
                 <TrendingUp className="w-3 h-3" />
                 +12% from yesterday
@@ -174,14 +190,8 @@ export default function Riders() {
 
             {/* Rating badge */}
             <motion.div
-              animate={{
-                rotate: [-3, 3, -3],
-              }}
-              transition={{
-                duration: 5,
-                repeat: Infinity,
-                ease: "easeInOut",
-              }}
+              animate={{ rotate: [-3, 3, -3] }}
+              transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
               className="absolute -left-4 top-[9%] z-20 hidden h-20 w-20 items-center justify-center rounded-full bg-gradient-to-br from-yellow-300 to-orange-400 text-center text-gray-950 shadow-xl shadow-orange-500/20 sm:flex"
             >
               <div>
@@ -193,7 +203,7 @@ export default function Riders() {
             </motion.div>
           </motion.div>
 
-          {/* Content section */}
+          {/* ─── Content section ─── */}
           <div>
             <motion.div
               initial={{ opacity: 0, y: 15 }}
@@ -223,7 +233,6 @@ export default function Riders() {
             >
               {riderBenefits.map((benefit) => {
                 const Icon = benefit.icon;
-
                 return (
                   <motion.div
                     key={benefit.title}
@@ -236,11 +245,9 @@ export default function Riders() {
                     >
                       <Icon className="w-5 h-5" />
                     </span>
-
                     <h3 className="mt-3 text-sm font-extrabold text-gray-900 group-hover:text-orange-600">
                       {benefit.title}
                     </h3>
-
                     <p className="mt-1.5 text-xs leading-5 text-gray-500">
                       {benefit.description}
                     </p>
@@ -261,12 +268,10 @@ export default function Riders() {
                   <p className="text-sm font-extrabold text-gray-900">
                     Start delivering in four simple steps
                   </p>
-
                   <p className="mt-1 text-xs text-gray-500">
                     A quick and transparent onboarding process
                   </p>
                 </div>
-
                 <span className="items-center justify-center hidden w-10 h-10 text-orange-500 bg-white shadow-sm rounded-xl sm:flex">
                   <Zap className="w-5 h-5" />
                 </span>
@@ -278,7 +283,6 @@ export default function Riders() {
                     <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-orange-500 to-red-500 text-[10px] font-extrabold text-white shadow-sm">
                       {index + 1}
                     </span>
-
                     <span className="text-xs font-semibold text-gray-700">
                       {step}
                     </span>
@@ -287,24 +291,41 @@ export default function Riders() {
               </div>
             </motion.div>
 
-            {/* CTA */}
+            {/* ─── CTA Buttons ─── */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              className="flex flex-col gap-4 mt-8 sm:flex-row sm:items-center"
+              className="flex flex-col gap-3 mt-8 sm:flex-row sm:items-center"
             >
+              {/* Download Delivery Partner App */}
               <Button
                 variant="primary"
+                onClick={handleDownloadApk}
                 className="group flex items-center justify-center gap-2 rounded-full bg-gradient-to-r from-orange-500 to-red-500 px-7 py-3.5 text-base shadow-lg shadow-orange-500/25"
               >
-                <Bike className="w-5 h-5" />
-                Join as Delivery Partner
+                <Download className="w-5 h-5 transition-transform group-hover:translate-y-0.5" />
+                Download Delivery App
                 <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
               </Button>
 
+              {/* Join as Delivery Partner (Coming Soon) */}
               <button
                 type="button"
+                onClick={handleJoinPartner}
+                className="inline-flex items-center justify-center gap-2 rounded-full border border-gray-200 bg-white px-6 py-3.5 text-sm font-bold text-gray-700 shadow-sm transition-all hover:-translate-y-0.5 hover:border-orange-300 hover:bg-orange-50 hover:text-orange-600 hover:shadow-md"
+              >
+                <Bike className="w-4 h-4" />
+                Join as Partner
+                <span className="rounded-full bg-gray-400 px-2 py-0.5 text-[10px] font-bold text-white">
+                  Soon
+                </span>
+              </button>
+
+              {/* Learn how it works (Coming Soon) */}
+              <button
+                type="button"
+                onClick={handleLearnMore}
                 className="inline-flex items-center justify-center gap-2 px-5 py-3 text-sm font-bold text-gray-600 transition-colors rounded-full group hover:bg-orange-50 hover:text-orange-600"
               >
                 Learn how it works
@@ -318,12 +339,10 @@ export default function Riders() {
                 <ShieldCheck className="w-4 h-4 text-green-500" />
                 Accident protection
               </div>
-
               <div className="flex items-center gap-2 text-xs font-semibold text-gray-500">
                 <WalletCards className="w-4 h-4 text-orange-500" />
                 Regular payouts
               </div>
-
               <div className="flex items-center gap-2 text-xs font-semibold text-gray-500">
                 <Headphones className="w-4 h-4 text-blue-500" />
                 Rider support
@@ -332,6 +351,22 @@ export default function Riders() {
           </div>
         </div>
       </div>
+
+      {/* ─── Toast ─── */}
+      <AnimatePresence>
+        {toast && (
+          <motion.div
+            initial={{ opacity: 0, y: 50, scale: 0.95 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: 20, scale: 0.95 }}
+            className="fixed bottom-6 left-1/2 z-[110] -translate-x-1/2 px-4"
+          >
+            <div className="flex items-center gap-2 px-5 py-3 text-sm font-semibold text-white bg-gray-900 shadow-2xl rounded-2xl">
+              {toast}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </section>
   );
 }
