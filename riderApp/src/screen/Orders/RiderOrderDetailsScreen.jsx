@@ -53,10 +53,18 @@ const STATUS_COLORS = {
 };
 
 // ─── Helper: Image URL with base URL ─────────────────────
-const BASE_URL = 'https://food-delivery-platform-ypx6.onrender.com'; 
+// ─── Helper: Image URL with base URL ─────────────────────
+const BASE_URL = 'https://food-delivery-platform-ypx6.onrender.com';
+
+const getImageUrl = url => {
   if (!url) return null;
+
   if (url.startsWith('http')) return url;
-  if (url.startsWith('/')) return BASE_URL + url;
+
+  if (url.startsWith('/')) {
+    return BASE_URL + url;
+  }
+
   return BASE_URL + '/' + url;
 };
 

@@ -54,7 +54,7 @@ const COLORS = {
   cardShadow: '#7c2d12',
 };
 
-const STATIC_BASE = 'http://10.200.227.211:9000'; //
+const STATIC_BASE = 'https://food-delivery-platform-ypx6.onrender.com'; //
 const DEFAULT_AVATAR =
   'https://ui-avatars.com/api/?name=User&background=ff5a1f&color=fff&size=100';
 
@@ -1820,7 +1820,9 @@ export default function CustomerHomeScreen({ navigation }) {
               size={24}
               color={COLORS.muted}
             />
-            <Text style={styles.tiffinEmptyText}>No tiffin houses nearby</Text>
+            <Text style={styles.tiffinEmptyText}>
+              Tiffin House service is coming soon!
+            </Text>
           </View>
         )}
 

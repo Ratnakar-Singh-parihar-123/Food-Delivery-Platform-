@@ -209,7 +209,11 @@ const TiffinHousesListScreen = ({ navigation, route }) => {
       </Text>
       <Pressable
         style={styles.homeButton}
-        onPress={() => navigation.navigate('Home')}
+        onPress={() =>
+          navigation.navigate('MainTabs', {
+            screen: 'Home',
+          })
+        }
       >
         <Text style={styles.homeButtonText}>Go to Home</Text>
       </Pressable>

@@ -18,7 +18,7 @@ import {
   FlatList,
   Vibration,
   Image,
-  Linking, // ✅ Added missing import
+  Linking,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Ionicons from 'react-native-vector-icons/Ionicons';
@@ -690,25 +690,48 @@ export default function RiderHomeScreen({ navigation }) {
 
           {/* Location */}
           <View style={styles.locationCard}>
-            <View style={styles.locationIconBg}>
-              <Ionicons name="location" size={18} color={COLORS.primary} />
+            {/* Icon */}
+            <View style={styles.locationIconWrap}>
+              <LinearGradient
+                colors={[COLORS.primary, COLORS.primaryDark]}
+                style={styles.locationIconGradient}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 1 }}
+              >
+                <Ionicons name="location" size={18} color="#FFF" />
+              </LinearGradient>
             </View>
+
+            {/* Info */}
             <View style={styles.locationInfo}>
-              <Text style={styles.locationLabel}>CURRENT LOCATION</Text>
-              <Text style={styles.locationText} numberOfLines={1}>
-                {addressLoading ? 'Updating address...' : address}
+              <View style={styles.locationLabelRow}>
+                <View style={styles.locationLiveDot} />
+                <Text style={styles.locationLabel}>CURRENT LOCATION</Text>
+              </View>
+
+              <Text style={styles.locationText} numberOfLines={2}>
+                {addressLoading
+                  ? 'Fetching your current location...'
+                  : address || 'Location not available'}
               </Text>
             </View>
+
+            {/* Refresh */}
             <Pressable
               onPress={getCurrentLocation}
-              style={styles.refreshLocation}
               disabled={addressLoading}
+              hitSlop={10}
+              style={({ pressed }) => [
+                styles.refreshLocation,
+                pressed && styles.refreshLocationPressed,
+                addressLoading && styles.refreshLocationDisabled,
+              ]}
             >
-              <Ionicons
-                name="refresh-outline"
-                size={18}
-                color={COLORS.primary}
-              />
+              {addressLoading ? (
+                <ActivityIndicator size="small" color={COLORS.primary} />
+              ) : (
+                <Ionicons name="refresh" size={18} color={COLORS.primary} />
+              )}
             </Pressable>
           </View>
 
@@ -1052,40 +1075,81 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: COLORS.white,
-    paddingHorizontal: 14,
-    paddingVertical: 10,
-    borderRadius: 16,
+    paddingHorizontal: 12,
+    paddingVertical: 12,
+    borderRadius: 18,
     borderWidth: 1,
-    borderColor: COLORS.border,
+    borderColor: '#FFE4D6',
     marginBottom: 16,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.04,
-    shadowRadius: 4,
-    elevation: 2,
+    gap: 12,
+    shadowColor: '#0F172A',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.06,
+    shadowRadius: 10,
+    elevation: 3,
   },
-  locationIconBg: {
-    width: 32,
-    height: 32,
-    borderRadius: 10,
+  locationIconWrap: {
+    width: 42,
+    height: 42,
+    borderRadius: 14,
     backgroundColor: '#FFF0EA',
     alignItems: 'center',
     justifyContent: 'center',
   },
-  locationInfo: { flex: 1, marginLeft: 10 },
+  locationIconGradient: {
+    width: 32,
+    height: 32,
+    borderRadius: 11,
+    alignItems: 'center',
+    justifyContent: 'center',
+    shadowColor: COLORS.primary,
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.25,
+    shadowRadius: 5,
+    elevation: 3,
+  },
+  locationInfo: { flex: 1 },
+  locationLabelRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    marginBottom: 3,
+  },
+  locationLiveDot: {
+    width: 6,
+    height: 6,
+    borderRadius: 3,
+    backgroundColor: COLORS.success,
+  },
   locationLabel: {
     fontSize: 10,
     fontWeight: '800',
     color: COLORS.muted,
-    letterSpacing: 0.8,
+    letterSpacing: 0.9,
   },
   locationText: {
-    fontSize: 13,
+    fontSize: 13.5,
     fontWeight: '700',
     color: COLORS.title,
-    marginTop: 1,
+    lineHeight: 18,
   },
-  refreshLocation: { padding: 4 },
+  refreshLocation: {
+    width: 38,
+    height: 38,
+    borderRadius: 12,
+    backgroundColor: '#FFF0EA',
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 1,
+    borderColor: '#FFD9C7',
+  },
+  refreshLocationPressed: {
+    backgroundColor: '#FFE4D6',
+    transform: [{ scale: 0.94 }],
+  },
+  refreshLocationDisabled: {
+    opacity: 0.6,
+  },
 
   /* Banners */
   bannerContainer: { marginBottom: 20 },
