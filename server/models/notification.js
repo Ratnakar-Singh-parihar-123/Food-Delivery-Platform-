@@ -1,134 +1,196 @@
-// import mongoose from "mongoose";
-
-// const dailyMenuItemSchema = new mongoose.Schema(
-//   {
-//     name: { type: String, required: true },
-//     description: { type: String, default: "" },
-//     price: { type: Number, required: true, min: 0 },
-//     isVeg: { type: Boolean, default: true },
-//   },
-//   { _id: false },
-// );
-
-// const dailyMenuSchema = new mongoose.Schema(
-//   {
-//     vendorId: {
-//       type: mongoose.Schema.Types.ObjectId,
-//       ref: "Vendor",
-//       required: true,
-//       index: true,
-//     },
-//     date: {
-//       type: Date,
-//       required: true,
-//       index: true,
-//     },
-//     items: [dailyMenuItemSchema],
-//   },
-//   { timestamps: true },
-// );
-
-// // Ensure one menu per vendor per day
-// dailyMenuSchema.index({ vendorId: 1, date: 1 }, { unique: true });
-
-// const DailyMenu = mongoose.model("DailyMenu", dailyMenuSchema);
-
-// export default DailyMenu; // ← must be default export
-
 import mongoose from "mongoose";
 
 const notificationSchema = new mongoose.Schema(
   {
-    // Receiving entity – Tiffin House (Vendor)
-    vendor: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Vendor", // या "TiffinHouse" – आपके मॉडल के अनुसार
-      required: true,
-      index: true,
+    /* =====================================================
+       SENDER
+    ===================================================== */
+
+    sender: {
+      id: {
+        type: mongoose.Schema.Types.ObjectId,
+        required: true,
+      },
+
+      type: {
+        type: String,
+        enum: ["admin", "customer", "vendor", "rider", "system"],
+        default: "system",
+      },
+
+      name: {
+        type: String,
+        default: "",
+        trim: true,
+      },
     },
-    // Optional – customer if the notification is about a specific order
-    customer: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Customer",
-      default: null,
-    },
-    // Optional – order reference
-    order: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Order",
-      default: null,
-    },
+
+    /* =====================================================
+       BASIC
+    ===================================================== */
+
     title: {
       type: String,
       required: true,
       trim: true,
     },
+
     message: {
       type: String,
       required: true,
       trim: true,
     },
+
     type: {
       type: String,
-      enum: ["order", "payment", "system", "promotion", "kyc", "payout"],
-      default: "system",
+      enum: [
+        "general",
+        "promotion",
+        "offer",
+        "order",
+        "payment",
+        "vendor",
+        "rider",
+        "system",
+        "warning",
+      ],
+      default: "general",
     },
-    isRead: {
-      type: Boolean,
-      default: false,
+
+    priority: {
+      type: String,
+      enum: ["low", "normal", "high", "urgent"],
+      default: "normal",
     },
-    // Extra metadata (e.g., order status, payment link, etc.)
-    data: {
-      type: mongoose.Schema.Types.Mixed,
-      default: {},
+
+    /* =====================================================
+       AUDIENCE
+    ===================================================== */
+
+    audience: {
+      type: {
+        type: String,
+        enum: ["all", "role", "users", "vendor_customers"],
+        required: true,
+      },
+
+      roles: {
+        type: [String],
+        default: [],
+      },
+
+      userIds: [
+        {
+          type: mongoose.Schema.Types.ObjectId,
+        },
+      ],
+
+      vendorId: {
+        type: mongoose.Schema.Types.ObjectId,
+        default: null,
+      },
     },
-    // For push notifications (optional)
-    pushSent: {
-      type: Boolean,
-      default: false,
+
+    /* =====================================================
+       IMAGE
+    ===================================================== */
+
+    image: {
+      type: String,
+      default: "",
+      trim: true,
     },
-    readAt: {
+
+    /* =====================================================
+       ACTION
+    ===================================================== */
+
+    action: {
+      label: {
+        type: String,
+        default: "",
+        trim: true,
+      },
+
+      url: {
+        type: String,
+        default: "",
+        trim: true,
+      },
+    },
+
+    /* =====================================================
+       OFFER
+    ===================================================== */
+
+    offer: {
+      discountType: {
+        type: String,
+        enum: ["none", "percentage", "flat"],
+        default: "none",
+      },
+
+      discountValue: {
+        type: Number,
+        default: 0,
+        min: 0,
+      },
+
+      couponCode: {
+        type: String,
+        default: "",
+        trim: true,
+        uppercase: true,
+      },
+    },
+
+    /* =====================================================
+       EXPIRY
+    ===================================================== */
+
+    expiresAt: {
       type: Date,
       default: null,
     },
+
+    /* =====================================================
+       STATUS
+    ===================================================== */
+
+    isActive: {
+      type: Boolean,
+      default: true,
+      index: true,
+    },
   },
-  { timestamps: true },
+  {
+    timestamps: true,
+  },
 );
 
-// Indexes for faster queries
-notificationSchema.index({ vendor: 1, createdAt: -1 });
-notificationSchema.index({ vendor: 1, isRead: 1 });
-notificationSchema.index({ order: 1 });
+/* =====================================================
+   INDEXES
+===================================================== */
 
-// Method to mark as read
-notificationSchema.methods.markAsRead = function () {
-  if (!this.isRead) {
-    this.isRead = true;
-    this.readAt = new Date();
-    return this.save();
-  }
-  return this;
-};
+notificationSchema.index({
+  "audience.type": 1,
+  createdAt: -1,
+});
 
-// Static method to create notification for an order update
-notificationSchema.statics.createOrderNotification = async function ({
-  vendorId,
-  customerId,
-  orderId,
-  title,
-  message,
-  data = {},
-}) {
-  return this.create({
-    vendor: vendorId,
-    customer: customerId,
-    order: orderId,
-    title,
-    message,
-    type: "order",
-    data,
-  });
-};
+notificationSchema.index({
+  "audience.roles": 1,
+  createdAt: -1,
+});
+
+notificationSchema.index({
+  "audience.userIds": 1,
+  createdAt: -1,
+});
+
+notificationSchema.index({
+  isActive: 1,
+  expiresAt: 1,
+});
 
 const Notification =
   mongoose.models.Notification ||

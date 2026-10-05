@@ -4,7 +4,7 @@ import AddressesScreen from '../screens/profile/AddressesScreen';
 import PaymentsScreen from '../screens/profile/PaymentsScreen';
 import CouponsScreen from '../screens/profile/CouponsScreen';
 import FavouritesScreen from '../screens/profile/FavouritesScreen';
-import NotificationsScreen from '../screens/profile/NotificationsScreen';
+import NotificationsScreen from '../screens/Notifications/NotificationsScreen';
 import PrivacySecurityScreen from '../screens/profile/PrivacySecurityScreen';
 import HelpSupportScreen from '../screens/profile/HelpSupportScreen';
 import AboutKhaoJiScreen from '../screens/profile/AboutKhaoJiScreen';

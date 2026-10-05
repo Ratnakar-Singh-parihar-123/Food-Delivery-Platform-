@@ -1,5 +1,5 @@
-import Notification from "../models/notificationRead.js";
-
+// import Notification from "../models/notificationRead.js";
+import Notification from "../models/notification.js";
 import asyncHandler from "../utils/asyncHandler.js";
 
 import { ApiError } from "../utils/ApiError.js";

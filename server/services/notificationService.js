@@ -1,4 +1,4 @@
-import Notification from "../models/notificationRead.js";
+import Notification from "../models/notification.js";
 
 import { getIO } from "../socket/socket.js";
 
@@ -8,6 +8,8 @@ import { getIO } from "../socket/socket.js";
 
 export const formatNotification = (notification) => ({
   id: notification._id,
+
+  _id: notification._id,
 
   title: notification.title,
 
@@ -25,13 +27,17 @@ export const formatNotification = (notification) => ({
 
   sender: notification.sender,
 
+  audience: notification.audience,
+
   createdAt: notification.createdAt,
+
+  updatedAt: notification.updatedAt,
 
   expiresAt: notification.expiresAt,
 });
 
 /* =====================================================
-   EMIT
+   EMIT NOTIFICATION
 ===================================================== */
 
 export const emitNotification = (notification) => {
@@ -41,7 +47,13 @@ export const emitNotification = (notification) => {
 
   const audience = notification.audience;
 
-  /* ALL USERS */
+  if (!audience?.type) {
+    return;
+  }
+
+  /* =====================================================
+     ALL USERS
+  ===================================================== */
 
   if (audience.type === "all") {
     io.emit("notification:new", payload);
@@ -49,38 +61,50 @@ export const emitNotification = (notification) => {
     return;
   }
 
-  /* ROLE */
+  /* =====================================================
+     ROLE BASED
+  ===================================================== */
 
   if (audience.type === "role") {
-    for (const role of audience.roles) {
+    const roles = Array.isArray(audience.roles) ? audience.roles : [];
+
+    for (const role of roles) {
       io.to(`role:${role}`).emit("notification:new", payload);
     }
 
     return;
   }
 
-  /* SPECIFIC USERS */
+  /* =====================================================
+     SPECIFIC USERS
+  ===================================================== */
 
   if (audience.type === "users") {
-    for (const userId of audience.userIds) {
+    const userIds = Array.isArray(audience.userIds) ? audience.userIds : [];
+
+    for (const userId of userIds) {
       io.to(`user:${userId}`).emit("notification:new", payload);
     }
 
     return;
   }
 
-  /* VENDOR CUSTOMERS */
+  /* =====================================================
+     VENDOR CUSTOMERS
+  ===================================================== */
 
   if (audience.type === "vendor_customers" && audience.vendorId) {
     io.to(`vendor-customers:${audience.vendorId}`).emit(
       "notification:new",
       payload,
     );
+
+    return;
   }
 };
 
 /* =====================================================
-   CREATE + EMIT
+   CREATE + SEND
 ===================================================== */
 
 export const createAndSendNotification = async (data) => {

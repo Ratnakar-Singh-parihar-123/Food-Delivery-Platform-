@@ -9,7 +9,7 @@ import { ApiError } from "../utils/ApiError.js";
 import { createAndSendNotification } from "../services/notificationService.js";
 
 /* =====================================================
-   VENDOR PROMOTION
+   CREATE VENDOR NOTIFICATION
 ===================================================== */
 
 export const createVendorNotification = asyncHandler(async (req, res) => {
@@ -32,18 +32,17 @@ export const createVendorNotification = asyncHandler(async (req, res) => {
 
   const vendor = req.vendor;
 
+  /* =====================================================
+       VENDOR AUTH CHECK
+    ===================================================== */
+
   if (!vendor) {
     throw new ApiError(401, "Vendor authentication required");
   }
 
-  if (!title?.trim() || !message?.trim()) {
-    throw new ApiError(400, "Title and message are required");
-  }
-
-  /*
-        Optional:
-        vendor active/approved checks
-      */
+  /* =====================================================
+       APPROVAL CHECK
+    ===================================================== */
 
   if (vendor.approvalStatus !== "approved") {
     throw new ApiError(
@@ -52,7 +51,23 @@ export const createVendorNotification = asyncHandler(async (req, res) => {
     );
   }
 
-  const validAudiences = ["all_customers", "selected_customers"];
+  /* =====================================================
+       TITLE / MESSAGE VALIDATION
+    ===================================================== */
+
+  if (!title?.trim()) {
+    throw new ApiError(400, "Title is required");
+  }
+
+  if (!message?.trim()) {
+    throw new ApiError(400, "Message is required");
+  }
+
+  /* =====================================================
+       VALID AUDIENCES
+    ===================================================== */
+
+  const validAudiences = ["all_customers", "selected_customers", "all_riders"];
 
   if (!validAudiences.includes(audience)) {
     throw new ApiError(400, "Invalid audience");
@@ -60,19 +75,11 @@ export const createVendorNotification = asyncHandler(async (req, res) => {
 
   let notificationAudience;
 
-  /* ===================================
-         ALL PAST CUSTOMERS
-      =================================== */
+  /* =====================================================
+       VENDOR → ALL CUSTOMERS
+    ===================================================== */
 
   if (audience === "all_customers") {
-    /*
-          Customers are already joined to:
-
-          vendor-customers:VENDOR_ID
-
-          based on delivered orders.
-        */
-
     notificationAudience = {
       type: "vendor_customers",
 
@@ -80,9 +87,9 @@ export const createVendorNotification = asyncHandler(async (req, res) => {
     };
   }
 
-  /* ===================================
-         SELECTED CUSTOMERS
-      =================================== */
+  /* =====================================================
+       VENDOR → SELECTED CUSTOMERS
+    ===================================================== */
 
   if (audience === "selected_customers") {
     if (!Array.isArray(customerIds) || customerIds.length === 0) {
@@ -90,12 +97,10 @@ export const createVendorNotification = asyncHandler(async (req, res) => {
     }
 
     /*
-          SECURITY CHECK:
-
-          Only customers who have
-          completed an order from
-          THIS vendor are allowed.
-        */
+        Only customers who have completed
+        a delivered order from this vendor
+        are allowed.
+      */
 
     const validCustomerIds = await Order.distinct("customer", {
       vendor: vendor._id,
@@ -107,7 +112,13 @@ export const createVendorNotification = asyncHandler(async (req, res) => {
       status: "delivered",
     });
 
-    if (validCustomerIds.length !== customerIds.length) {
+    const validIdsAsString = validCustomerIds.map((id) => id.toString());
+
+    const invalidCustomerExists = customerIds.some(
+      (id) => !validIdsAsString.includes(id.toString()),
+    );
+
+    if (invalidCustomerExists) {
       throw new ApiError(
         403,
         "One or more selected customers are not customers of this vendor",
@@ -121,9 +132,27 @@ export const createVendorNotification = asyncHandler(async (req, res) => {
     };
   }
 
-  /* ===================================
-         OFFER VALIDATION
-      =================================== */
+  /* =====================================================
+       VENDOR → ALL RIDERS
+    ===================================================== */
+
+  if (audience === "all_riders") {
+    notificationAudience = {
+      type: "role",
+
+      roles: ["rider"],
+    };
+  }
+
+  /* =====================================================
+       DISCOUNT VALIDATION
+    ===================================================== */
+
+  const allowedDiscountTypes = ["none", "percentage", "fixed"];
+
+  if (!allowedDiscountTypes.includes(discountType)) {
+    throw new ApiError(400, "Invalid discount type");
+  }
 
   const parsedDiscount = Number(discountValue || 0);
 
@@ -134,7 +163,19 @@ export const createVendorNotification = asyncHandler(async (req, res) => {
     throw new ApiError(400, "Percentage discount must be between 1 and 100");
   }
 
+  if (discountType === "fixed" && parsedDiscount < 0) {
+    throw new ApiError(400, "Fixed discount cannot be negative");
+  }
+
+  /* =====================================================
+       VENDOR NAME
+    ===================================================== */
+
   const vendorName = vendor.businessName || vendor.name || "Vendor";
+
+  /* =====================================================
+       CREATE NOTIFICATION
+    ===================================================== */
 
   const notification = await createAndSendNotification({
     sender: {
@@ -149,6 +190,10 @@ export const createVendorNotification = asyncHandler(async (req, res) => {
 
     message: message.trim(),
 
+    /*
+          Vendor notifications are currently
+          promotion based.
+        */
     type: "promotion",
 
     priority: "normal",
@@ -172,10 +217,14 @@ export const createVendorNotification = asyncHandler(async (req, res) => {
     expiresAt: expiresAt || null,
   });
 
+  /* =====================================================
+       RESPONSE
+    ===================================================== */
+
   res.status(201).json({
     success: true,
 
-    message: "Promotion notification sent successfully",
+    message: "Notification sent successfully",
 
     data: {
       notification,
@@ -188,18 +237,86 @@ export const createVendorNotification = asyncHandler(async (req, res) => {
 ===================================================== */
 
 export const getVendorNotificationHistory = asyncHandler(async (req, res) => {
-  const notifications = await Notification.find({
-    "sender.type": "vendor",
+  const vendor = req.vendor;
 
-    "sender.id": req.vendor._id,
+  /* =====================================================
+       AUTH CHECK
+    ===================================================== */
+
+  if (!vendor) {
+    throw new ApiError(401, "Vendor authentication required");
+  }
+
+  const vendorId = vendor._id;
+
+  /* =====================================================
+       ADMIN → VENDOR
+       ADMIN → EVERYONE
+       VENDOR → CUSTOMER
+       VENDOR → RIDER
+       VENDOR OWN NOTIFICATIONS
+    ===================================================== */
+
+  const notifications = await Notification.find({
+    $or: [
+      /* ============================================
+             VENDOR'S OWN NOTIFICATIONS
+          ============================================ */
+
+      {
+        "sender.type": "vendor",
+
+        "sender.id": vendorId,
+      },
+
+      /* ============================================
+             ADMIN → ALL
+          ============================================ */
+
+      {
+        "sender.type": "admin",
+
+        "audience.type": "all",
+      },
+
+      /* ============================================
+             ADMIN → VENDOR ROLE
+          ============================================ */
+
+      {
+        "sender.type": "admin",
+
+        "audience.type": "role",
+
+        "audience.roles": "vendor",
+      },
+
+      /* ============================================
+             ADMIN → SPECIFIC VENDOR
+          ============================================ */
+
+      {
+        "sender.type": "admin",
+
+        "audience.type": "users",
+
+        "audience.userIds": vendorId,
+      },
+    ],
   })
     .sort({
       createdAt: -1,
     })
-    .limit(50);
+    .limit(100);
+
+  /* =====================================================
+       RESPONSE
+    ===================================================== */
 
   res.status(200).json({
     success: true,
+
+    count: notifications.length,
 
     data: {
       notifications,

@@ -8,7 +8,7 @@ export const SOCKET_URL =
   import.meta.env.VITE_SOCKET_URL || "http://localhost:9000";
 
 // ─── Axios instance ──────────────────────────────────────────
-const api = axios.create({    
+const api = axios.create({
   baseURL: API_BASE,
   withCredentials: true,
 });
@@ -312,3 +312,23 @@ export const vendorRespondOrder = async (orderId, action, reason = "") => {
 export const getVendorBankDetailsApi = () => axios.get("/vendor/bank-details");
 export const updateVendorBankDetailsApi = (data) =>
   axios.put("/vendor/bank-details", data);
+
+/* =====================================================
+   GET VENDOR NOTIFICATION HISTORY
+===================================================== */
+
+export const getVendorNotificationHistory = async () => {
+  const response = await api.get("/vendors/notifications");
+
+  return response.data;
+};
+
+/* =====================================================
+   CREATE VENDOR NOTIFICATION
+===================================================== */
+
+export const createVendorNotification = async (payload) => {
+  const response = await api.post("/vendors/notifications", payload);
+
+  return response.data;
+};
