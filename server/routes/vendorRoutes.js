@@ -229,7 +229,7 @@ router.put(
    🟢 PUBLIC WILDCARD ROUTES (MUST BE LAST)
    These are for public viewing of vendor profiles & menus
 ===================================================== */
-router.get("/:vendorId", getVendorById);
 router.get("/:vendorId/menu/items", getVendorMenuItems);
+router.get("/:vendorId", getVendorById);
 
 export default router;

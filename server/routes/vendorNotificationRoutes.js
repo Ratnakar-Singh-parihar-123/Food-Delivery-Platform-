@@ -13,23 +13,33 @@ import {
 const router = express.Router();
 
 /* =====================================================
-   ALL VENDOR NOTIFICATION ROUTES
+   🔔 VENDOR NOTIFICATIONS
 ===================================================== */
 
 router.use(protectVendor, requireApprovedVendor);
 
-/* =====================================================
-   CREATE
-   POST /vendor-notifications
-===================================================== */
-
-router.post("/", createVendorNotification);
-
-/* =====================================================
-   HISTORY
-   GET /vendor-notifications
-===================================================== */
+/*
+|--------------------------------------------------------------------------
+| GET
+| Vendor receives:
+| - Admin → Vendor
+| - Admin → All
+| - Vendor's own sent notifications
+|--------------------------------------------------------------------------
+*/
 
 router.get("/", getVendorNotificationHistory);
+
+/*
+|--------------------------------------------------------------------------
+| POST
+| Vendor sends:
+| - Vendor → All Customers
+| - Vendor → Selected Customers
+| - Vendor → All Riders
+|--------------------------------------------------------------------------
+*/
+
+router.post("/", createVendorNotification);
 
 export default router;
