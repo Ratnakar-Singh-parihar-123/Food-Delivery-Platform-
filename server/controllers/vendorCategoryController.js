@@ -1,3 +1,4 @@
+import mongoose from "mongoose";
 import Category from "../models/VendorCategory.js";
 import MenuItem from "../models/MenuItem.js";
 
@@ -129,39 +130,109 @@ export const deleteCategory = async (req, res) => {
 };
 
 // ─── Get all categories for a vendor (public) ────────────────
+// export const getCategories = async (req, res) => {
+//   try {
+//     const { vendorId } = req.params;
+//     const { includeItems = "false" } = req.query;
+
+//     const filter = { vendorId, isActive: true };
+
+//     const categories = await Category.find(filter).sort("sortOrder");
+
+//     // If includeItems=true, populate items inside each category
+//     if (includeItems === "true") {
+//       const categoriesWithItems = await Promise.all(
+//         categories.map(async (cat) => {
+//           const items = await MenuItem.find({
+//             categoryId: cat._id,
+//             isAvailable: true,
+//           }).sort("sortOrder");
+//           return { ...cat.toObject(), items };
+//         }),
+//       );
+//       return res.status(200).json({
+//         success: true,
+//         data: { categories: categoriesWithItems },
+//       });
+//     }
+
+//     res.status(200).json({
+//       success: true,
+//       data: { categories },
+//     });
+//   } catch (error) {
+//     console.error("❌ Get categories error:", error);
+//     res.status(500).json({ success: false, message: "Server error" });
+//   }
+// };
 export const getCategories = async (req, res) => {
   try {
     const { vendorId } = req.params;
     const { includeItems = "false" } = req.query;
 
-    const filter = { vendorId, isActive: true };
+    let filter;
 
-    const categories = await Category.find(filter).sort("sortOrder");
+    if (vendorId === "global") {
+      // Global categories must be stored with vendorId: null.
+      filter = {
+        vendorId: null,
+        isActive: true,
+      };
+    } else {
+      // Validate the vendor ID before querying MongoDB.
+      if (!mongoose.Types.ObjectId.isValid(vendorId)) {
+        return res.status(400).json({
+          success: false,
+          message: "Invalid vendor ID",
+        });
+      }
 
-    // If includeItems=true, populate items inside each category
+      filter = {
+        vendorId,
+        isActive: true,
+      };
+    }
+
+    const categories = await Category.find(filter).sort({
+      sortOrder: 1,
+    });
+
     if (includeItems === "true") {
       const categoriesWithItems = await Promise.all(
         categories.map(async (cat) => {
           const items = await MenuItem.find({
             categoryId: cat._id,
             isAvailable: true,
-          }).sort("sortOrder");
-          return { ...cat.toObject(), items };
+          }).sort({ sortOrder: 1 });
+
+          return {
+            ...cat.toObject(),
+            items,
+          };
         }),
       );
+
       return res.status(200).json({
         success: true,
-        data: { categories: categoriesWithItems },
+        data: {
+          categories: categoriesWithItems,
+        },
       });
     }
 
-    res.status(200).json({
+    return res.status(200).json({
       success: true,
-      data: { categories },
+      data: {
+        categories,
+      },
     });
   } catch (error) {
     console.error("❌ Get categories error:", error);
-    res.status(500).json({ success: false, message: "Server error" });
+
+    return res.status(500).json({
+      success: false,
+      message: "Server error",
+    });
   }
 };
 

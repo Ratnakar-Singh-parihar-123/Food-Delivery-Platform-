@@ -57,20 +57,43 @@ export default function AddCategory({ onClose, onSuccess }) {
   const [deleteLoading, setDeleteLoading] = useState(null);
 
   // ─── Fetch data ──────────────────────────────────────────
+  // ─── Fetch data ──────────────────────────────────────────
   const fetchData = useCallback(async () => {
-    if (!vendorId) return;
+    if (!vendorId) {
+      setLoading(false);
+      return;
+    }
+
     try {
       setLoading(true);
+
       const [catsRes, globalRes] = await Promise.all([
         getVendorCategories(vendorId),
         getGlobalCategories(),
       ]);
-      setCategories(catsRes.data?.categories || []);
-      setGlobalCategories(globalRes.data || []);
+
+      // Support both Axios responses and already-extracted API data.
+      const extractCategories = (response) => {
+        const payload = response?.data ?? response;
+
+        const candidates = [
+          payload?.data?.categories,
+          payload?.categories,
+          payload?.data,
+          payload,
+        ];
+
+        return candidates.find(Array.isArray) || [];
+      };
+
+      setCategories(extractCategories(catsRes));
+      setGlobalCategories(extractCategories(globalRes));
       setError("");
     } catch (err) {
-      console.error("Failed to fetch data:", err);
-      setError("Failed to load categories");
+      console.error("Failed to fetch categories:", err);
+      setCategories([]);
+      setGlobalCategories([]);
+      setError(err?.response?.data?.message || "Failed to load categories");
     } finally {
       setLoading(false);
     }
@@ -202,7 +225,9 @@ export default function AddCategory({ onClose, onSuccess }) {
   );
 
   // ─── Select options ──────────────────────────────────────
-  const globalCategoryOptions = globalCategories.map((gc) => ({
+  const globalCategoryOptions = (
+    Array.isArray(globalCategories) ? globalCategories : []
+  ).map((gc) => ({
     value: gc._id,
     label: (
       <div className="flex items-center gap-2">
@@ -211,7 +236,6 @@ export default function AddCategory({ onClose, onSuccess }) {
             src={buildImageUrl(gc.image)}
             alt={gc.name}
             className="object-cover w-6 h-6 rounded"
-            onError={(e) => (e.target.style.display = "none")}
           />
         ) : (
           <span className="text-lg">{gc.icon || "🍽️"}</span>
